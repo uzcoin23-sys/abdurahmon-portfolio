@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — AR·Dev</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:      #0f1117;
+      --card:    rgba(255,255,255,0.05);
+      --border:  rgba(255,255,255,0.1);
+      --fg:      #e8eaf0;
+      --muted:   rgba(232,234,240,0.5);
+      --primary: #818cf8;
+      --danger:  #f87171;
+      --success: #4ade80;
+    }
+    html,body { min-height:100%; background:var(--bg); font-family:'Inter',-apple-system,sans-serif; color:var(--fg); }
+
+    /* ── BACKGROUND ── */
+    .bg-orbs { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+    .orb { position:absolute; border-radius:50%; filter:blur(120px); }
+    .orb-1 { width:500px;height:500px;background:rgba(99,102,241,.18);top:-150px;left:-150px; }
+    .orb-2 { width:400px;height:400px;background:rgba(168,85,247,.14);bottom:-100px;right:-100px; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      position: fixed; inset:0; z-index:100;
+      display: flex; align-items:center; justify-content:center;
+      padding: 1rem;
+    }
+    .login-card {
+      width: 100%; max-width: 360px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(24px);
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+    }
+    .login-logo { font-size:1.25rem; font-weight:700; margin-bottom:1.5rem; }
+    .login-logo span { background:linear-gradient(135deg,#818cf8,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .login-card h1 { font-size:1.5rem; font-weight:600; margin-bottom:.375rem; }
+    .login-card p { font-size:.875rem; color:var(--muted); margin-bottom:1.75rem; }
+    .field { margin-bottom:1rem; }
+    .field label { display:block; font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:.5rem; }
+    .field input {
+      width:100%; background:rgba(255,255,255,.07); border:1px solid var(--border);
+      border-radius:.625rem; padding:.75rem 1rem; color:var(--fg); font-size:.875rem;
+      font-family:inherit; outline:none; transition:border-color .2s, box-shadow .2s;
+    }
+    .field input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(129,140,248,.2); }
+    .btn-primary {
+      width:100%; padding:.75rem; border-radius:.625rem;
+      background:var(--primary); color:#fff; font-size:.875rem; font-weight:600;
+      border:none; cursor:pointer; font-family:inherit; transition:opacity .2s;
+    }
+    .btn-primary:hover { opacity:.88; }
+    .login-err { font-size:.8125rem; color:var(--danger); margin-top:.75rem; display:none; }
+
+    /* ── APP SHELL ── */
+    #app { display:none; position:relative; z-index:1; }
+    .topbar {
+      position:fixed; top:0; left:0; right:0; z-index:50;
+      background:rgba(15,17,23,.85); backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:.875rem 1.5rem;
+    }
+    .topbar-logo { font-size:.9rem; font-weight:700; }
+    .topbar-logo span { background:linear-gradient(135deg,#818cf8,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .topbar-right { display:flex; align-items:center; gap:1rem; }
+    .topbar-right a { font-size:.8125rem; color:var(--muted); text-decoration:none; }
+    .topbar-right a:hover { color:var(--fg); }
+    .logout-btn {
+      background:rgba(248,113,113,.12); border:1px solid rgba(248,113,113,.3);
+      color:var(--danger); font-size:.75rem; font-weight:600; padding:.375rem .875rem;
+      border-radius:.5rem; cursor:pointer; font-family:inherit; border:none;
+      transition:background .2s;
+    }
+    .logout-btn:hover { background:rgba(248,113,113,.22); }
+
+    .main { max-width:64rem; margin:0 auto; padding:6rem 1.25rem 4rem; }
+
+    /* ── STATS BAR ── */
+    .stats-bar { display:flex; gap:.75rem; margin-bottom:2rem; flex-wrap:wrap; }
+    .stat-chip {
+      flex:1; min-width:120px; background:var(--card); border:1px solid var(--border);
+      border-radius:1rem; padding:1rem 1.25rem;
+    }
+    .stat-chip .sc-val { font-size:1.75rem; font-weight:700; background:linear-gradient(135deg,#818cf8,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .stat-chip .sc-lbl { font-size:.75rem; color:var(--muted); margin-top:.125rem; }
+
+    /* ── FILTERS ── */
+    .filter-row { display:flex; align-items:center; gap:.5rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+    .filter-btn {
+      padding:.375rem 1rem; border-radius:9999px; font-size:.8125rem; font-weight:500;
+      background:rgba(255,255,255,.06); border:1px solid var(--border);
+      color:var(--muted); cursor:pointer; font-family:inherit; transition:all .2s;
+    }
+    .filter-btn:hover { color:var(--fg); border-color:rgba(255,255,255,.22); }
+    .filter-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+    .add-btn {
+      margin-left:auto; padding:.5rem 1.25rem; border-radius:9999px;
+      background:var(--primary); color:#fff; font-size:.8125rem; font-weight:600;
+      border:none; cursor:pointer; font-family:inherit; transition:opacity .2s;
+      display:flex; align-items:center; gap:.375rem;
+    }
+    .add-btn:hover { opacity:.85; }
+
+    /* ── PROJECT GRID ── */
+    .proj-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; }
+    .proj-item {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:1.25rem; overflow:hidden; display:flex; flex-direction:column;
+      transition:border-color .2s;
+    }
+    .proj-item:hover { border-color:rgba(255,255,255,.22); }
+    .proj-thumb {
+      aspect-ratio:16/9; background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(168,85,247,.2));
+      display:flex; align-items:center; justify-content:center; font-size:2rem; overflow:hidden;
+    }
+    .proj-thumb img { width:100%; height:100%; object-fit:cover; }
+    .proj-content { padding:1.125rem; flex:1; display:flex; flex-direction:column; gap:.375rem; }
+    .proj-cat-badge { font-size:.625rem; font-weight:700; text-transform:uppercase; letter-spacing:.15em; color:var(--primary); }
+    .proj-name { font-size:.9375rem; font-weight:600; }
+    .proj-tech-list { display:flex; flex-wrap:wrap; gap:.25rem; }
+    .ptag { font-size:.625rem; padding:.15rem .5rem; border-radius:9999px; background:rgba(255,255,255,.08); color:var(--muted); }
+    .proj-actions { display:flex; gap:.5rem; padding:.875rem 1.125rem; border-top:1px solid var(--border); }
+    .act-btn {
+      flex:1; padding:.4375rem; border-radius:.5rem; font-size:.75rem; font-weight:600;
+      border:none; cursor:pointer; font-family:inherit; transition:opacity .2s;
+    }
+    .act-btn.edit { background:rgba(129,140,248,.15); color:var(--primary); }
+    .act-btn.edit:hover { background:rgba(129,140,248,.25); }
+    .act-btn.del  { background:rgba(248,113,113,.12); color:var(--danger); }
+    .act-btn.del:hover  { background:rgba(248,113,113,.22); }
+
+    .empty-state { text-align:center; padding:5rem 2rem; color:var(--muted); grid-column:1/-1; font-size:.9375rem; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position:fixed; inset:0; z-index:200;
+      background:rgba(0,0,0,.65); backdrop-filter:blur(4px);
+      display:flex; align-items:center; justify-content:center; padding:1rem;
+    }
+    .modal-overlay.hidden { display:none; }
+    .modal {
+      width:100%; max-width:540px; max-height:90vh; overflow-y:auto;
+      background:rgba(20,22,30,.95); border:1px solid var(--border);
+      border-radius:1.5rem; padding:2rem;
+    }
+    .modal-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    .modal-hdr h2 { font-size:1.125rem; font-weight:700; }
+    .modal-close { background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.25rem; line-height:1; padding:.25rem; }
+    .modal-close:hover { color:var(--fg); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .form-field { margin-bottom:1rem; }
+    .form-field label { display:block; font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:.4rem; }
+    .form-field input, .form-field textarea, .form-field select {
+      width:100%; background:rgba(255,255,255,.07); border:1px solid var(--border);
+      border-radius:.625rem; padding:.625rem .875rem; color:var(--fg); font-size:.875rem;
+      font-family:inherit; outline:none; transition:border-color .2s, box-shadow .2s;
+    }
+    .form-field textarea { resize:vertical; min-height:80px; }
+    .form-field select option { background:#1a1c26; }
+    .form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+      border-color:var(--primary); box-shadow:0 0 0 3px rgba(129,140,248,.18);
+    }
+    .modal-footer { display:flex; gap:.75rem; margin-top:1.5rem; justify-content:flex-end; }
+    .btn-cancel {
+      padding:.625rem 1.25rem; border-radius:.625rem; background:rgba(255,255,255,.08);
+      color:var(--fg); border:none; cursor:pointer; font-family:inherit; font-size:.875rem;
+    }
+    .btn-save {
+      padding:.625rem 1.5rem; border-radius:.625rem; background:var(--primary);
+      color:#fff; border:none; cursor:pointer; font-family:inherit; font-size:.875rem; font-weight:600;
+    }
+
+    /* ── TOAST ── */
+    .toast-wrap { position:fixed; bottom:1.5rem; right:1.5rem; z-index:999; display:flex; flex-direction:column; gap:.5rem; }
+    .toast {
+      padding:.75rem 1.25rem; border-radius:.75rem; font-size:.875rem; font-weight:500;
+      animation:toastIn .3s ease both;
+      max-width:300px;
+    }
+    .toast.ok  { background:rgba(74,222,128,.15); border:1px solid rgba(74,222,128,.35); color:var(--success); }
+    .toast.err { background:rgba(248,113,113,.15); border:1px solid rgba(248,113,113,.35); color:var(--danger); }
+    @keyframes toastIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+
+    /* ── API KEYS ── */
+    .section-title {
+      font-size:1.125rem; font-weight:700; margin:2.5rem 0 1rem;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .section-title span { display:flex; align-items:center; gap:.5rem; }
+    .key-card {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:1.25rem; padding:1.25rem 1.5rem;
+      margin-bottom:.75rem; transition:border-color .2s;
+    }
+    .key-card.active-key { border-color:rgba(74,222,128,.4); }
+    .key-card:hover { border-color:rgba(255,255,255,.2); }
+    .key-top { display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; }
+    .key-label { font-size:.9375rem; font-weight:600; }
+    .key-val { font-size:.75rem; color:var(--muted); font-family:monospace; background:rgba(255,255,255,.06); padding:.2rem .6rem; border-radius:.375rem; }
+    .badge-active { font-size:.625rem; font-weight:700; text-transform:uppercase; letter-spacing:.12em; background:rgba(74,222,128,.15); color:var(--success); border:1px solid rgba(74,222,128,.3); padding:.2rem .6rem; border-radius:9999px; }
+    .key-bar-wrap { margin:.875rem 0 .625rem; }
+    .key-bar-info { display:flex; justify-content:space-between; font-size:.75rem; color:var(--muted); margin-bottom:.375rem; }
+    .key-bar-track { height:8px; background:rgba(255,255,255,.08); border-radius:9999px; overflow:hidden; }
+    .key-bar-fill { height:100%; border-radius:9999px; transition:width .6s cubic-bezier(.4,0,.2,1); }
+    .key-sub { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin-top:.75rem; font-size:.75rem; color:var(--muted); }
+    .key-sub span { background:rgba(255,255,255,.05); padding:.25rem .55rem; border-radius:.75rem; }
+    .key-sub .key-provider { color:var(--primary); font-weight:700; }
+    .key-btns { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.75rem; }
+    .key-btn.check { background:rgba(250,204,21,.12); color:#fbbf24; }
+    .key-btn.check:hover { background:rgba(250,204,21,.22); }
+    .key-btn.edit { background:rgba(56,189,248,.12); color:#38bdf8; }
+    .key-btn.edit:hover { background:rgba(56,189,248,.18); }
+    .key-btn {
+      padding:.375rem .875rem; border-radius:.5rem; font-size:.75rem; font-weight:600;
+      border:none; cursor:pointer; font-family:inherit; transition:opacity .2s;
+    }
+    .key-btn.activate { background:rgba(129,140,248,.15); color:var(--primary); }
+    .key-btn.activate:hover { background:rgba(129,140,248,.28); }
+    .key-btn.check { background:rgba(250,204,21,.12); color:#fbbf24; }
+    .key-btn.check:hover { background:rgba(250,204,21,.22); }
+    .key-btn.remove { background:rgba(248,113,113,.12); color:var(--danger); }
+    .key-btn.remove:hover { background:rgba(248,113,113,.22); }
+    .key-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+    /* Key modal */
+    .key-modal { max-width:440px; }
+  </style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+</div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo"><span>AR</span>·Dev Admin</div>
+    <h1>Kirish</h1>
+    <p>Admin panelga kirish uchun parolni kiriting.</p>
+    <div class="field">
+      <label>Parol</label>
+      <input type="password" id="pass-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Kirish</button>
+    <div class="login-err" id="login-err">Noto'g'ri parol. Qayta urinib ko'ring.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="topbar">
+    <div class="topbar-logo"><span>AR</span>·Dev <span style="color:var(--muted);font-size:.75rem;font-weight:400">Admin</span></div>
+    <div class="topbar-right">
+      <a href="/portfolio.html">Portfolio →</a>
+      <button class="logout-btn" onclick="logout()">Chiqish</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="stats-bar">
+      <div class="stat-chip"><div class="sc-val" id="total-count">0</div><div class="sc-lbl">Jami loyihalar</div></div>
+      <div class="stat-chip"><div class="sc-val" id="fe-count">0</div><div class="sc-lbl">Frontend</div></div>
+      <div class="stat-chip"><div class="sc-val" id="ai-count">0</div><div class="sc-lbl">AI</div></div>
+      <div class="stat-chip"><div class="sc-val" id="mob-count">0</div><div class="sc-lbl">Mobile</div></div>
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-btn active" data-cat="all" onclick="setFilter('all')">Barchasi</button>
+      <button class="filter-btn" data-cat="Frontend" onclick="setFilter('Frontend')">Frontend</button>
+      <button class="filter-btn" data-cat="AI" onclick="setFilter('AI')">AI</button>
+      <button class="filter-btn" data-cat="Mobile" onclick="setFilter('Mobile')">Mobile</button>
+      <button class="filter-btn" data-cat="Backend" onclick="setFilter('Backend')">Backend</button>
+      <button class="add-btn" onclick="openModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Loyiha qo'shish
+      </button>
+    </div>
+
+    <div class="proj-grid" id="proj-grid">
+      <div class="empty-state">Yuklanmoqda...</div>
+    </div>
+
+    <!-- ── API KALITLAR ── -->
+    <div class="section-title">
+      <span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        API Kalitlar
+      </span>
+      <button class="add-btn" onclick="openKeyModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Kalit qo'shish
+      </button>
+    </div>
+    <div id="keys-list"><div class="empty-state" style="padding:2rem">Yuklanmoqda...</div></div>
+  </div>
+</div>
+
+<!-- KEY MODAL -->
+<div class="modal-overlay hidden" id="key-modal-overlay">
+  <div class="modal key-modal">
+    <div class="modal-hdr">
+      <h2 id="key-modal-title">API Kalit qo'shish</h2>
+      <button class="modal-close" onclick="closeKeyModal()">×</button>
+    </div>
+    <input type="hidden" id="k-id">
+    <div class="form-field">
+      <label>Kalit nomi (ixtiyoriy)</label>
+      <input type="text" id="k-label" placeholder="Masalan: Asosiy kalit">
+    </div>
+    <div class="form-field">
+      <label>API Provayderi</label>
+      <select id="k-provider" onchange="toggleCustomFields()">
+        <option value="auto">Avtomatik aniqlash</option>
+        <option value="groq">Groq</option>
+        <option value="gemini">Gemini</option>
+        <option value="openai">OpenAI</option>
+        <option value="github">GitHub Models</option>
+        <option value="xai">xAI / Grok</option>
+        <option value="compatible">OpenAI-compatible / boshqa</option>
+      </select>
+    </div>
+    <div id="custom-fields" style="display:block;">
+      <div class="form-field">
+        <label>Base URL / Endpoint (ixtiyoriy)</label>
+        <input type="url" id="k-endpoint" placeholder="Avtomatik topilmasa: https://api.example.com/v1">
+      </div>
+      <div class="form-field">
+        <label>Model (ixtiyoriy)</label>
+        <input type="text" id="k-model" placeholder="Masalan: gemini-2.5-flash yoki openai/gpt-4.1">
+      </div>
+      <div class="form-field" style="display:none;">
+        <label>Headers (JSON)</label>
+        <textarea id="k-headers" placeholder='{"Authorization": "Bearer {key}", "Content-Type": "application/json"}' rows="3"></textarea>
+      </div>
+      <div class="form-field" style="display:none;">
+        <label>Body Template (JSON)</label>
+        <textarea id="k-body" placeholder='{"model": "{model}", "messages": {messages}, "stream": true}' rows="4"></textarea>
+      </div>
+    </div>
+    <div class="form-field">
+      <label id="key-label">API Key *</label>
+      <input type="text" id="k-value" placeholder="API kalitini kiriting">
+    </div>
+    <div class="form-field">
+      <label>Qolgan limit / vaziyat (ixtiyoriy)</label>
+      <input type="text" id="k-remaining" placeholder="Masalan: 1200 token, 5000/6000, ishlayapti">
+    </div>
+    <div class="form-field" style="display:flex;align-items:center;gap:.625rem;">
+      <input type="checkbox" id="k-activate" style="width:auto;accent-color:var(--primary)">
+      <label for="k-activate" style="text-transform:none;letter-spacing:0;font-size:.875rem;color:var(--fg)">Darhol faollashtirish</label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeKeyModal()">Bekor</button>
+      <button class="btn-save" id="k-save-btn" onclick="saveKey()">Saqlash va tekshirish</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT MODAL -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h2 id="modal-title">Loyiha qo'shish</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <input type="hidden" id="edit-id">
+    <div class="form-field">
+      <label>Sarlavha *</label>
+      <input type="text" id="f-title" placeholder="Portfolio sayt">
+    </div>
+    <div class="form-field">
+      <label>Tavsif</label>
+      <textarea id="f-desc" placeholder="Loyiha haqida qisqa ma'lumot..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Kategoriya</label>
+        <select id="f-cat">
+          <option value="">— Tanlang —</option>
+          <option>Frontend</option>
+          <option>AI</option>
+          <option>Mobile</option>
+          <option>Backend</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Texnologiyalar</label>
+        <input type="text" id="f-tech" placeholder="HTML, CSS, JS">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Rasm URL</label>
+      <input type="url" id="f-img" placeholder="https://...">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Demo havolasi</label>
+        <input type="url" id="f-live" placeholder="https://...">
+      </div>
+      <div class="form-field">
+        <label>GitHub havolasi</label>
+        <input type="url" id="f-gh" placeholder="https://github.com/...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Bekor</button>
+      <button class="btn-save" onclick="saveProject()">Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+let token = localStorage.getItem('ar_admin_token') || '';
+let allProjects = [];
+let allKeys = [];
+let currentFilter = 'all';
+
+const CAT_ICONS = { Frontend:'🌐', AI:'🤖', Mobile:'📱', Backend:'⚙️' };
+
+function escapeHTML(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function safeUrl(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return '';
+  try {
+    const url = new URL(raw, window.location.origin);
+    if (url.protocol === 'http:' || url.protocol === 'https:') return url.href;
+  } catch {}
+  if (/^(assets\/|\.\/assets\/|\/assets\/)/.test(raw)) return raw;
+  return '';
+}
+
+async function apiRequest(url, options = {}) {
+  const headers = { ...(options.headers || {}) };
+  if (options.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+  if (token) headers['x-admin-token'] = token;
+
+  const res = await fetch(url, { ...options, headers });
+  const type = res.headers.get('content-type') || '';
+  const data = type.includes('application/json')
+    ? await res.json().catch(() => ({}))
+    : await res.text().catch(() => '');
+
+  if (!res.ok) {
+    const err = new Error((data && data.error) || (data && data.message) || data || `HTTP ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
+if (token) initApp();
+
+async function doLogin() {
+  const pass = document.getElementById('pass-input').value;
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+
+  if (!pass.trim()) {
+    err.textContent = 'Parolni kiriting.';
+    err.style.display = 'block';
+    return;
+  }
+
+  try {
+    const data = await apiRequest('/api/admin/login', {
+      method: 'POST',
+      body: JSON.stringify({ password: pass })
+    });
+    token = data.token;
+    localStorage.setItem('ar_admin_token', token);
+    await initApp();
+  } catch (e) {
+    err.textContent = e.message || "Noto'g'ri parol. Qayta urinib ko'ring.";
+    err.style.display = 'block';
+  }
+}
+
+async function initApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  try {
+    await Promise.all([loadProjects(), loadKeys()]);
+  } catch (e) {
+    if (e.status === 401) {
+      forceLogout();
+      return;
+    }
+    toast(e.message || 'Ma\'lumotlarni yuklashda xatolik', 'err');
+  }
+}
+
+function forceLogout() {
+  localStorage.removeItem('ar_admin_token');
+  token = '';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+async function logout() {
+  try { await apiRequest('/api/admin/logout', { method: 'POST' }); } catch {}
+  forceLogout();
+}
+
+async function loadProjects() {
+  allProjects = await apiRequest('/api/projects');
+  updateStats();
+  renderGrid();
+}
+
+function updateStats() {
+  document.getElementById('total-count').textContent = allProjects.length;
+  document.getElementById('fe-count').textContent = allProjects.filter(p => p.category === 'Frontend').length;
+  document.getElementById('ai-count').textContent = allProjects.filter(p => p.category === 'AI').length;
+  document.getElementById('mob-count').textContent = allProjects.filter(p => p.category === 'Mobile').length;
+}
+
+function renderGrid() {
+  const grid = document.getElementById('proj-grid');
+  const list = currentFilter === 'all' ? allProjects : allProjects.filter(p => p.category === currentFilter);
+
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty-state">Loyihalar topilmadi.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(p => {
+    const id = Number(p.id);
+    const icon = CAT_ICONS[p.category] || '💡';
+    const imageUrl = safeUrl(p.image_url);
+    const imgHtml = imageUrl
+      ? `<img src="${escapeHTML(imageUrl)}" alt="${escapeHTML(p.title)}" onerror="this.parentElement.textContent='${icon}'">`
+      : icon;
+    const tags = p.tech_stack
+      ? p.tech_stack.split(',').map(t => `<span class="ptag">${escapeHTML(t.trim())}</span>`).join('')
+      : '';
+
+    return `
+      <div class="proj-item">
+        <div class="proj-thumb">${imgHtml}</div>
+        <div class="proj-content">
+          ${p.category ? `<div class="proj-cat-badge">${escapeHTML(p.category)}</div>` : ''}
+          <div class="proj-name">${escapeHTML(p.title)}</div>
+          ${tags ? `<div class="proj-tech-list">${tags}</div>` : ''}
+        </div>
+        <div class="proj-actions">
+          <button class="act-btn edit" onclick="editProject(${id})">Tahrirlash</button>
+          <button class="act-btn del" onclick="deleteProject(${id})">O'chirish</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function setFilter(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.cat === cat);
+  });
+  renderGrid();
+}
+
+function openModal(project) {
+  document.getElementById('modal-title').textContent = project ? 'Loyihani tahrirlash' : "Loyiha qo'shish";
+  document.getElementById('edit-id').value = project?.id ?? '';
+  document.getElementById('f-title').value = project?.title ?? '';
+  document.getElementById('f-desc').value = project?.description ?? '';
+  document.getElementById('f-cat').value = project?.category ?? '';
+  document.getElementById('f-tech').value = project?.tech_stack ?? '';
+  document.getElementById('f-img').value = project?.image_url ?? '';
+  document.getElementById('f-live').value = project?.live_url ?? '';
+  document.getElementById('f-gh').value = project?.github_url ?? '';
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+
+function editProject(id) {
+  const p = allProjects.find(x => Number(x.id) === Number(id));
+  if (p) openModal(p);
+}
+
+async function deleteProject(id) {
+  const project = allProjects.find(p => Number(p.id) === Number(id));
+  const name = project?.title || 'loyiha';
+  if (!confirm(`"${name}" loyihasini o'chirasizmi?`)) return;
+
+  try {
+    await apiRequest(`/api/projects/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    toast("Loyiha o'chirildi", 'ok');
+    await loadProjects();
+  } catch (e) {
+    toast(e.message || "Loyihani o'chirishda xatolik", 'err');
+  }
+}
+
+async function saveProject() {
+  const id = document.getElementById('edit-id').value;
+  const title = document.getElementById('f-title').value.trim();
+  if (!title) { toast('Sarlavha majburiy', 'err'); return; }
+
+  const payload = {
+    title,
+    description: document.getElementById('f-desc').value.trim(),
+    category: document.getElementById('f-cat').value,
+    tech_stack: document.getElementById('f-tech').value.trim(),
+    image_url: document.getElementById('f-img').value.trim(),
+    live_url: document.getElementById('f-live').value.trim(),
+    github_url: document.getElementById('f-gh').value.trim()
+  };
+
+  try {
+    await apiRequest(id ? `/api/projects/${encodeURIComponent(id)}` : '/api/projects', {
+      method: id ? 'PUT' : 'POST',
+      body: JSON.stringify(payload)
+    });
+    toast(id ? 'Yangilandi' : "Qo'shildi", 'ok');
+    closeModal();
+    await loadProjects();
+  } catch (e) {
+    toast(e.message || 'Saqlashda xatolik', 'err');
+  }
+}
+
+function toast(msg, type = 'ok') {
+  const wrap = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+document.getElementById('key-modal-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeKeyModal();
+});
+document.getElementById('pass-input')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+async function loadKeys() {
+  allKeys = await apiRequest('/api/admin/keys');
+  renderKeys(allKeys);
+}
+
+function barColor(pct) {
+  if (pct >= 90) return '#f87171';
+  if (pct >= 70) return '#fbbf24';
+  return '#4ade80';
+}
+
+function renderKeys(keys) {
+  const wrap = document.getElementById('keys-list');
+  if (!keys.length) {
+    wrap.innerHTML = '<div class="empty-state" style="padding:2rem">Hali kalit qo\'shilmagan.</div>';
+    return;
+  }
+
+  wrap.innerHTML = keys.map(k => {
+    const id = Number(k.id);
+    const total = Number(k.limit_total || 0);
+    const used = Number(k.limit_used || 0);
+    const pct = total > 0 ? Math.min(100, Math.max(0, Math.round((used / total) * 100))) : 0;
+    const remaining = total > 0 ? Math.max(0, total - used) : 0;
+    return `
+    <div class="key-card ${k.is_active ? 'active-key' : ''}" id="key-card-${id}">
+      <div class="key-top">
+        ${k.is_active ? '<span class="badge-active">✓ Faol</span>' : ''}
+        <span class="key-label">${escapeHTML(k.label || 'API kalit')}</span>
+        <span class="key-val">${escapeHTML(k.key_masked || 'api_...')}</span>
+      </div>
+      <div class="key-bar-wrap">
+        <div class="key-bar-info">
+          <span>Ishlatilgan: ${used.toLocaleString()} token</span>
+          <span>Qolgan: ${remaining.toLocaleString()}</span>
+        </div>
+        <div class="key-bar-track"><div class="key-bar-fill" style="width:${pct}%;background:${barColor(pct)}"></div></div>
+      </div>
+      <div class="key-sub">
+        <span class="key-provider">${escapeHTML(k.provider_label || k.provider || 'API')}</span>
+        <span>Model: ${escapeHTML(k.model || 'avtomatik')}</span>
+        ${k.base_url ? `<span>${escapeHTML(k.base_url)}</span>` : ''}
+        <span>Limit: ${total.toLocaleString()}</span>
+        ${k.limit_reset ? `<span>Reset: ${escapeHTML(k.limit_reset)}</span>` : ''}
+      </div>
+      <div class="key-btns">
+        ${!k.is_active ? `<button class="key-btn activate" onclick="activateKey(${id})">Faollashtirish</button>` : ''}
+        <button class="key-btn check" id="chk-${id}" onclick="checkKey(${id})">⟳ Tekshirish</button>
+        <button class="key-btn edit" onclick="editKey(${id})">Tahrirlash</button>
+        <button class="key-btn remove" onclick="removeKey(${id})" ${k.is_active ? 'disabled title="Faol kalitni o\'chirib bo\'lmaydi"' : ''}>O'chirish</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function activateKey(id) {
+  try {
+    await apiRequest(`/api/admin/keys/${encodeURIComponent(id)}/activate`, { method: 'PUT' });
+    toast('Kalit faollashtirildi', 'ok');
+    await loadKeys();
+  } catch (e) {
+    toast(e.message || 'Kalitni faollashtirishda xatolik', 'err');
+  }
+}
+
+async function checkKey(id) {
+  const btn = document.getElementById('chk-' + id);
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  try {
+    const info = await apiRequest(`/api/admin/keys/${encodeURIComponent(id)}/check`, { method: 'POST' });
+    toast(info.rate_limited ? 'Kalit ishlaydi, lekin limit tugagan' : 'Kalit ishlayapti', info.rate_limited ? 'err' : 'ok');
+    await loadKeys();
+  } catch (e) {
+    toast(e.message || 'Tekshirishda xatolik', 'err');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '⟳ Tekshirish'; }
+  }
+}
+
+async function removeKey(id) {
+  const key = allKeys.find(k => Number(k.id) === Number(id));
+  const label = key?.label || 'Kalit';
+  if (!confirm(`"${label}" kalitini o'chirasizmi?`)) return;
+  try {
+    await apiRequest(`/api/admin/keys/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    toast("Kalit o'chirildi", 'ok');
+    await loadKeys();
+  } catch (e) {
+    toast(e.message || "Kalitni o'chirishda xatolik", 'err');
+  }
+}
+
+function openKeyModal() {
+  document.getElementById('k-id').value = '';
+  document.getElementById('key-modal-title').textContent = "API Kalit qo'shish";
+  document.getElementById('k-label').value = '';
+  document.getElementById('k-value').value = '';
+  document.getElementById('k-value').placeholder = 'API kalitini kiriting';
+  document.getElementById('k-remaining').value = '';
+  document.getElementById('k-activate').checked = false;
+  document.getElementById('k-provider').value = 'auto';
+  document.getElementById('k-endpoint').value = '';
+  document.getElementById('k-model').value = '';
+  document.getElementById('k-headers').value = '';
+  document.getElementById('k-body').value = '';
+  toggleCustomFields();
+  document.getElementById('key-modal-overlay').classList.remove('hidden');
+  document.getElementById('k-value').focus();
+}
+
+function editKey(id) {
+  const k = allKeys.find(k => Number(k.id) === Number(id));
+  if (!k) return;
+  document.getElementById('k-id').value = k.id;
+  document.getElementById('key-modal-title').textContent = 'API Kalit tahrirlash';
+  document.getElementById('k-label').value = k.label || '';
+  document.getElementById('k-value').value = '';
+  document.getElementById('k-value').placeholder = "Yangi kalit kiriting (o'zgartirmaslik uchun bo'sh qoldiring)";
+  document.getElementById('k-remaining').value = '';
+  document.getElementById('k-activate').checked = k.is_active || false;
+  document.getElementById('k-provider').value = k.provider || 'auto';
+  document.getElementById('k-endpoint').value = k.base_url || '';
+  document.getElementById('k-model').value = k.model || '';
+  document.getElementById('k-headers').value = '';
+  document.getElementById('k-body').value = '';
+  toggleCustomFields();
+  document.getElementById('key-modal-overlay').classList.remove('hidden');
+  document.getElementById('k-label').focus();
+}
+
+function toggleCustomFields() {
+  const customDiv = document.getElementById('custom-fields');
+  const keyLabel = document.getElementById('key-label');
+  customDiv.style.display = 'block';
+  keyLabel.textContent = 'API Key *';
+}
+
+function closeKeyModal() {
+  document.getElementById('key-modal-overlay').classList.add('hidden');
+}
+
+async function saveKey() {
+  const editingId = document.getElementById('k-id').value;
+  const provider = document.getElementById('k-provider').value;
+  const label = document.getElementById('k-label').value.trim();
+  const key_value = document.getElementById('k-value').value.trim();
+  const base_url = document.getElementById('k-endpoint').value.trim();
+  const model = document.getElementById('k-model').value.trim();
+  const make_active = document.getElementById('k-activate').checked;
+
+  if (!editingId && !key_value) { toast('API key kiritilmagan', 'err'); return; }
+
+  const saveBtn = document.getElementById('k-save-btn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = editingId ? 'Saqlanmoqda...' : 'Tekshirilmoqda...';
+  try {
+    if (editingId) {
+      await apiRequest(`/api/admin/keys/${encodeURIComponent(editingId)}`, {
+        method: 'PUT',
+        body: JSON.stringify({ label, provider, base_url, model, key_value: key_value || undefined, make_active })
+      });
+      toast('Kalit yangilandi', 'ok');
+    } else {
+      await apiRequest('/api/admin/keys', {
+        method: 'POST',
+        body: JSON.stringify({ label, provider, base_url, model, key_value, make_active })
+      });
+      toast(make_active ? "Kalit qo'shildi va faollashtirildi" : "Kalit qo'shildi", 'ok');
+    }
+    closeKeyModal();
+    await loadKeys();
+  } catch (e) {
+    toast(e.message || 'Kalitni saqlashda xatolik', 'err');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Saqlash va tekshirish';
+  }
+}
+</script>
+</body>
+</html>

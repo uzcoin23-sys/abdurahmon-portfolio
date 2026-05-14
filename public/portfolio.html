@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Odilbekov Abdurahmon — Portfolio</title>
+  <meta name="description" content="Odilbekov Abdurahmon — AXT talabasi, frontend dasturchi va AI enthusiast. Toshkent, O'zbekiston.">
+  <meta name="keywords" content="Odilbekov Abdurahmon, portfolio, frontend, AI, TIU, web developer, o'zbekiston">
+  <meta name="author" content="Odilbekov Abdurahmon">
+  <meta property="og:title" content="Odilbekov Abdurahmon — Portfolio">
+  <meta property="og:description" content="AXT talabasi · TIU 2-kurs. Frontend va AI texnologiyalari.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:         oklch(0.985 0.002 270);
+      --fg:         oklch(0.18 0.01 270);
+      --primary:    oklch(0.58 0.18 255);
+      --muted-fg:   oklch(0.5 0.01 270);
+      --border:     oklch(0.9 0.005 270);
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--fg);
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND ── */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: oklch(0.985 0.002 270);
+      overflow: hidden;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      animation: orbFloat var(--dur, 16s) ease-in-out infinite;
+    }
+    .orb-1 { width:600px;height:600px;background:oklch(0.78 0.18 255);top:-160px;left:-160px;opacity:.5;filter:blur(120px);--dur:14s; }
+    .orb-2 { width:520px;height:520px;background:oklch(0.78 0.16 320);top:33%;right:-160px;opacity:.4;filter:blur(120px);--dur:18s;animation-direction:reverse; }
+    .orb-3 { width:480px;height:480px;background:oklch(0.85 0.14 200);bottom:-160px;left:33%;opacity:.35;filter:blur(120px);--dur:22s; }
+    @keyframes orbFloat {
+      0%,100% { transform:translate(0,0) scale(1); }
+      33%      { transform:translate(30px,-25px) scale(1.05); }
+      66%      { transform:translate(-20px,35px) scale(0.96); }
+    }
+
+    /* ── GLASS ── */
+    .glass {
+      background: oklch(1 0 0 / 0.55);
+      border: 1px solid oklch(1 0 0 / 0.7);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: oklch(1 0 0 / 0.6) 0px 1px 0px 0px inset, oklch(0.2 0.05 260 / 0.06) 0px 4px 24px 0px;
+    }
+    .glass-strong {
+      background: oklch(1 0 0 / 0.75);
+      border: 1px solid oklch(1 0 0 / 0.8);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      box-shadow: oklch(1 0 0 / 0.6) 0px 1px 0px 0px inset, oklch(0.2 0.05 260 / 0.1) 0px 8px 48px 0px;
+    }
+    .glass-hover { transition: background .2s, box-shadow .2s; }
+    .glass-hover:hover { background: oklch(1 0 0 / 0.72); box-shadow: oklch(1 0 0 / 0.6) 0px 1px 0px 0px inset, oklch(0.2 0.05 260 / 0.1) 0px 8px 32px 0px; }
+
+    /* ── GRADIENTS ── */
+    .tg {
+      background: linear-gradient(135deg, oklch(0.18 0.01 270) 30%, oklch(0.46 0.13 270) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .tg-primary {
+      background: linear-gradient(135deg, oklch(0.58 0.18 255), oklch(0.64 0.15 270));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── LAYOUT ── */
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 1rem 1.25rem;
+    }
+    .nav-inner {
+      max-width: 72rem;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .6rem 1.25rem;
+      border-radius: 9999px;
+    }
+    .nav-logo {
+      font-size: .9rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--fg);
+      letter-spacing: -.02em;
+      cursor: pointer;
+    }
+    .logo-ar { background:linear-gradient(135deg,#5F6CF8,#818CF8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .logo-sep { color:rgba(100,100,120,.45); margin:0 .375rem; }
+    .nav-links { display:flex; align-items:center; gap:.25rem; }
+    .nav-links a {
+      padding: .375rem 1rem;
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--muted-fg);
+      text-decoration: none;
+      border-radius: 9999px;
+      transition: color .2s, background .2s;
+      cursor: pointer;
+    }
+    .nav-links a:hover { color:var(--fg); background:rgba(0,0,0,.05); }
+    .nav-links a.active { color:var(--fg); background:rgba(0,0,0,.05); }
+    .nav-burger {
+      display: none;
+      padding: .5rem;
+      border-radius: 9999px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--fg);
+    }
+
+    /* ── PAGES ── */
+    main { padding-top: 7rem; min-height: 100vh; }
+    .page { display: none; }
+    .page.active {
+      display: block;
+      animation: pgIn .4s ease both;
+    }
+    @keyframes pgIn {
+      from { opacity:0; transform:translateY(14px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ── HOME: HERO ── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 2.5rem 4rem;
+      align-items: center;
+      padding: 2rem 0 5rem;
+      min-height: 70vh;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .375rem 1rem;
+      border-radius: 9999px;
+      font-size: .75rem;
+      font-weight: 500;
+      color: var(--muted-fg);
+      margin-bottom: 1.5rem;
+    }
+    .hero-badge svg { color: var(--primary); }
+    .hero-h1 {
+      font-size: clamp(2.4rem,5.5vw,4.5rem);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -.025em;
+      margin-bottom: 1.5rem;
+    }
+    .hero-desc {
+      font-size: 1.25rem;
+      color: var(--muted-fg);
+      line-height: 1.625;
+      max-width: 32rem;
+      margin-bottom: .75rem;
+    }
+    .hero-loc {
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+      font-size: 1rem;
+      color: var(--muted-fg);
+      margin-bottom: 2.5rem;
+    }
+    .hero-btns { display:flex; flex-wrap:wrap; gap:.75rem; }
+
+    .btn-dark {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .75rem 1.5rem;
+      border-radius: 9999px;
+      background: var(--fg);
+      color: #fff;
+      font-size: .875rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .2s, box-shadow .2s;
+    }
+    .btn-dark:hover { background:#2d2d3d; box-shadow:0 4px 20px rgba(0,0,0,.22); }
+    .btn-dark svg { transition: transform .2s; }
+    .btn-dark:hover svg { transform: translateX(2px); }
+
+    .btn-glass {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .75rem 1.5rem;
+      border-radius: 9999px;
+      font-size: .875rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--fg);
+    }
+
+    /* Hero photo */
+    .photo-wrap {
+      position: relative;
+      max-width: 19rem;
+      margin: 0 auto;
+    }
+    .photo-glow {
+      position: absolute;
+      inset: -1.5rem;
+      border-radius: 2.5rem;
+      background: linear-gradient(135deg,rgba(95,108,248,.4),rgba(192,132,252,.3),rgba(103,232,249,.3));
+      filter: blur(2.5rem);
+      opacity: .6;
+    }
+    .photo-card {
+      position: relative;
+      border-radius: 2rem;
+      padding: .75rem;
+    }
+    .photo-inner {
+      position: relative;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      aspect-ratio: 4/5;
+    }
+    .photo-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 10%;
+      display: block;
+    }
+    .photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,rgba(0,0,0,.45) 0%,transparent 55%);
+    }
+    .photo-label {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      color: #fff;
+    }
+    .photo-label .pl-sub { font-size:.6875rem; font-weight:400; text-transform:uppercase; letter-spacing:.2em; color:rgba(255,255,255,.7); }
+    .photo-label .pl-main { font-size:1.125rem; font-weight:600; margin-top:.25rem; }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: .75rem;
+      margin-top: 4rem;
+    }
+    .stat-card {
+      border-radius: 2rem;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .stat-num { font-size:2.25rem; font-weight:600; line-height:1; }
+    .stat-lbl { font-size:.875rem; font-weight:400; text-transform:uppercase; letter-spacing:0.7px; color:var(--muted-fg); margin-top:.25rem; }
+
+    /* Home chat section */
+    .home-chat-sec {
+      margin-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .375rem 1rem;
+      border-radius: 9999px;
+      font-size: .75rem;
+      font-weight: 500;
+      color: var(--primary);
+      margin-bottom: 1.25rem;
+    }
+    .sec-title {
+      font-size: clamp(2.25rem,5vw,3.75rem);
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -.025em;
+    }
+    .sec-desc {
+      font-size: .9375rem;
+      color: var(--muted-fg);
+      line-height: 1.65;
+      margin-top: .875rem;
+      max-width: 32rem;
+    }
+
+    /* ── CHAT BOX (shared) ── */
+    .chat-box {
+      border-radius: 1.5rem;
+      padding: .75rem;
+      display: flex;
+      flex-direction: column;
+      height: 62vh;
+      min-height: 480px;
+      max-height: 680px;
+    }
+    .msgs-area {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: .75rem;
+    }
+    .msgs-area::-webkit-scrollbar { width:3px; }
+    .msgs-area::-webkit-scrollbar-thumb { background:rgba(0,0,0,.1); border-radius:2px; }
+
+    .chat-greeting {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1rem;
+      gap: .75rem;
+      height: 100%;
+    }
+    .bot-icon {
+      width: 3.5rem; height: 3.5rem;
+      border-radius: 1rem;
+      background: rgba(95,108,248,.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .chat-greeting h4 { font-size:.9375rem; font-weight:600; }
+    .chat-greeting p { font-size:.8125rem; color:var(--muted-fg); }
+
+    .msg-row { display:flex; gap:.625rem; margin-bottom:.875rem; animation:msgIn .3s ease both; }
+    .msg-row.user { flex-direction:row-reverse; }
+    @keyframes msgIn {
+      from { opacity:0; transform:translateY(8px) scale(.98); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+    .msg-av {
+      width:2rem; height:2rem;
+      border-radius:.625rem;
+      display:flex; align-items:center; justify-content:center;
+      font-size:.6875rem; font-weight:700;
+      flex-shrink:0; margin-top:2px;
+    }
+    .msg-av.bot  { background:rgba(95,108,248,.1); color:var(--primary); }
+    .msg-av.user { background:rgba(0,0,0,.06); color:var(--muted-fg); }
+    .msg-bub {
+      max-width: 75%;
+      padding: .625rem .875rem;
+      border-radius: 1rem;
+      font-size: .875rem;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+    .msg-row.bot  .msg-bub { background:rgba(0,0,0,.04); border:1px solid rgba(0,0,0,.06); border-top-left-radius:.25rem; }
+    .msg-row.user .msg-bub { background:var(--fg); color:#fff; border-top-right-radius:.25rem; }
+
+    /* ── MARKDOWN BOT BUBBLE ── */
+    .mbub h3 { font-size:13px; font-weight:700; color:var(--fg); margin:10px 0 6px; padding-bottom:4px; border-bottom:1px solid rgba(0,0,0,.08); }
+    .mbub ul, .mbub ol { padding-left:18px; margin:6px 0; display:flex; flex-direction:column; gap:4px; }
+    .mbub li { font-size:13px; line-height:1.5; }
+    .mbub strong { color:var(--primary); font-weight:600; }
+    .mbub p { margin:4px 0; line-height:1.6; }
+    .mbub code { background:rgba(99,102,241,.1); border:1px solid rgba(99,102,241,.2); border-radius:4px; padding:1px 6px; font-size:12px; color:var(--primary); font-family:monospace; }
+    .mbub hr { border:none; border-top:1px solid rgba(0,0,0,.08); margin:8px 0; }
+    .mbub p:first-child { margin-top:0; }
+    .mbub p:last-child  { margin-bottom:0; }
+
+    .tw-cursor {
+      display:inline-block; width:2px; height:1em;
+      background:var(--fg); margin-left:2px;
+      vertical-align:text-bottom;
+      animation: twblink .75s ease-in-out infinite;
+    }
+    @keyframes twblink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .qbtns { display:flex; flex-wrap:wrap; gap:.375rem; padding:.625rem .25rem; }
+    .qbtn {
+      font-size:.6875rem; font-weight:500;
+      padding:.3rem .75rem;
+      border-radius:9999px;
+      background:rgba(0,0,0,.05);
+      border:none; color:var(--fg);
+      cursor:pointer; font-family:inherit;
+      transition:background .2s;
+    }
+    .qbtn:hover{background:rgba(0,0,0,.1);}
+    .qbtn:disabled{opacity:.5;cursor:not-allowed;}
+
+    .input-wrap {
+      margin-top:.375rem;
+      border:1px solid var(--border);
+      border-radius:.75rem;
+      overflow:hidden;
+      background:rgba(255,255,255,.65);
+      transition:border-color .2s,box-shadow .2s;
+    }
+    .input-wrap:focus-within { border-color:rgba(95,108,248,.4); box-shadow:0 0 0 3px rgba(95,108,248,.1); }
+    .input-wrap textarea {
+      width:100%; border:none; outline:none;
+      background:transparent;
+      padding:.75rem 1rem;
+      font-size:.875rem; font-family:inherit; color:var(--fg);
+      resize:none; min-height:3.5rem; max-height:8rem;
+    }
+    .input-wrap textarea::placeholder{color:var(--muted-fg);}
+    .input-footer { display:flex; justify-content:flex-end; padding:.375rem .5rem; border-top:1px solid rgba(0,0,0,.05); }
+    .send-btn {
+      width:2rem;height:2rem;border-radius:.5rem;
+      background:var(--fg);color:#fff;border:none;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:background .2s,transform .15s;font-family:inherit;
+    }
+    .send-btn:hover{background:#2d2d3d;transform:scale(1.06);}
+    .send-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+    .send-btn svg{width:14px;height:14px;}
+
+    /* ── PAGE HEADER (about/skills/chat/contact) ── */
+    .page-hdr {
+      text-align:center;
+      padding:1.5rem 0 3rem;
+      max-width:46rem;margin:0 auto;
+    }
+    .page-hdr .section-badge{justify-content:center;}
+    .page-hdr .sec-title{margin-top:1.25rem;}
+    .page-hdr .sec-desc{margin:1rem auto 0;text-align:center;}
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;
+      padding-bottom:5rem;
+    }
+    .a-card {
+      border-radius:2rem;
+      padding:2rem;
+    }
+    .a-icon {
+      width:2.5rem;height:2.5rem;border-radius:.75rem;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.125rem;background:rgba(95,108,248,.1);
+      margin-bottom:1rem;
+    }
+    .a-card h3{font-size:1rem;font-weight:600;margin-bottom:.5rem;}
+    .a-card p{font-size:.875rem;color:var(--muted-fg);line-height:1.6;}
+
+    /* ── SKILLS ── */
+    .skills-wrap{max-width:54rem;margin:0 auto;padding-bottom:5rem;}
+    .skills-card{border-radius:2rem;padding:2.5rem;}
+    .sk-item{padding:1.25rem 0;border-bottom:1px solid rgba(0,0,0,.06);}
+    .sk-item:last-child{border-bottom:none;padding-bottom:0;}
+    .sk-item:first-child{padding-top:0;}
+    .sk-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.25rem;}
+    .sk-name{font-size:1rem;font-weight:600;}
+    .sk-pct{font-size:.875rem;font-weight:600;color:var(--muted-fg);}
+    .sk-tags{font-size:.75rem;color:var(--muted-fg);margin-bottom:.75rem;}
+    .bar-track{height:10px;background:rgba(0,0,0,.05);border-radius:9999px;overflow:hidden;}
+    .bar-fill{height:100%;border-radius:9999px;width:0%;transition:width 1.3s cubic-bezier(.4,0,.2,1);}
+
+    /* ── ABOUT BADGES ── */
+    .about-badges{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin:1.5rem auto 2.5rem;}
+    .a-badge{padding:.375rem .875rem;border-radius:9999px;font-size:.8125rem;font-weight:500;color:var(--muted-fg);border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.6);}
+
+    /* ── PROJECTS ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+      gap: 1.25rem;
+      padding-bottom: 5rem;
+      max-width: 72rem;
+      margin: 0 auto;
+    }
+    .proj-card {
+      border-radius: 2rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s;
+    }
+    .proj-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.1); }
+    .proj-img {
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, rgba(95,108,248,.15), rgba(192,132,252,.15));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; overflow: hidden;
+    }
+    .proj-img img { width:100%; height:100%; object-fit:cover; }
+    .proj-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; gap: .5rem; }
+    .proj-cat { font-size:.6875rem; font-weight:700; text-transform:uppercase; letter-spacing:.18em; color:var(--primary); }
+    .proj-title { font-size:1.0625rem; font-weight:600; }
+    .proj-desc { font-size:.875rem; color:var(--muted-fg); line-height:1.6; flex:1; }
+    .proj-tech { display:flex; flex-wrap:wrap; gap:.375rem; margin-top:.25rem; }
+    .proj-tag { font-size:.6875rem; padding:.2rem .6rem; border-radius:9999px; background:rgba(0,0,0,.05); color:var(--muted-fg); font-weight:500; }
+    .proj-links { display:flex; gap:.5rem; margin-top:.75rem; }
+    .proj-link { font-size:.8125rem; font-weight:500; padding:.35rem .875rem; border-radius:9999px; text-decoration:none; transition:background .2s; }
+    .proj-link.live { background:var(--fg); color:#fff; }
+    .proj-link.live:hover { background:#2d2d3d; }
+    .proj-link.gh { background:rgba(0,0,0,.07); color:var(--fg); }
+    .proj-link.gh:hover { background:rgba(0,0,0,.13); }
+    .projects-empty { text-align:center; color:var(--muted-fg); padding:4rem 2rem; font-size:.9375rem; grid-column:1/-1; }
+
+    /* ── CONTACT ── */
+    .contact-list{max-width:46rem;margin:0 auto;display:grid;gap:1rem;padding-bottom:5rem;}
+    .c-card {
+      display:flex;align-items:center;gap:1.125rem;
+      padding:1.5rem;border-radius:2rem;
+      text-decoration:none;color:var(--fg);
+      transition:transform .2s,box-shadow .2s;
+    }
+    .c-card:hover{transform:translateX(4px);box-shadow:0 8px 32px rgba(0,0,0,.09);}
+    .c-ico{width:2.75rem;height:2.75rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .c-ico.em{background:rgba(95,108,248,.12);color:var(--primary);}
+    .c-ico.tg{background:rgba(59,130,246,.12);color:#3b82f6;}
+    .c-ico.ph{background:rgba(16,185,129,.12);color:#10b981;}
+    .c-ico.gh{background:rgba(0,0,0,.08);color:var(--fg);}
+    .c-info{flex:1;}
+    .c-lbl{font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:var(--muted-fg);}
+    .c-val{font-size:1.125rem;font-weight:600;margin-top:.25rem;}
+    .c-arr{color:var(--primary);flex-shrink:0;}
+
+    /* ── FOOTER ── */
+    footer{position:relative;z-index:1;padding:2.5rem 1.25rem;text-align:center;font-size:.75rem;color:var(--muted-fg);}
+
+    /* ── HERO STAGGERED ENTRANCE ── */
+    .hero-left > * {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: heroIn .6s cubic-bezier(.22,1,.36,1) both;
+    }
+    .hero-left > *:nth-child(1) { animation-delay: .05s; }
+    .hero-left > *:nth-child(2) { animation-delay: .15s; }
+    .hero-left > *:nth-child(3) { animation-delay: .22s; }
+    .hero-left > *:nth-child(4) { animation-delay: .29s; }
+    .hero-left > *:nth-child(5) { animation-delay: .36s; }
+    .photo-wrap {
+      opacity: 0;
+      animation: heroIn .7s cubic-bezier(.22,1,.36,1) .2s both;
+    }
+    @keyframes heroIn {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ── PHOTO FLOAT ── */
+    .photo-card {
+      animation: photoFloat 6s ease-in-out infinite;
+    }
+    @keyframes photoFloat {
+      0%,100% { transform: translateY(0px); }
+      50%      { transform: translateY(-10px); }
+    }
+
+    /* ── HOVER LIFTS ── */
+    .stat-card {
+      transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s;
+    }
+    .stat-card:hover { transform: translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,.1); }
+
+    .a-card {
+      transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s;
+    }
+    .a-card:hover { transform: translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,.1); }
+
+    /* ── SCROLL-REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .55s cubic-bezier(.22,1,.36,1), transform .55s cubic-bezier(.22,1,.36,1);
+    }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-delay-1 { transition-delay: .08s; }
+    .reveal-delay-2 { transition-delay: .16s; }
+    .reveal-delay-3 { transition-delay: .24s; }
+    .reveal-delay-4 { transition-delay: .32s; }
+
+    /* ── STATUS PULSE DOT ── */
+    .pulse-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      margin-right: .375rem;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+    @keyframes pulseDot {
+      0%,100% { opacity:1; transform:scale(1); box-shadow:0 0 0 0 rgba(34,197,94,.5); }
+      50%      { opacity:.8; transform:scale(1.1); box-shadow:0 0 0 5px rgba(34,197,94,0); }
+    }
+
+    /* ── SKILL BAR STAGGER ── */
+    .sk-item:nth-child(1) .bar-fill { transition-delay: .0s; }
+    .sk-item:nth-child(2) .bar-fill { transition-delay: .1s; }
+    .sk-item:nth-child(3) .bar-fill { transition-delay: .2s; }
+    .sk-item:nth-child(4) .bar-fill { transition-delay: .3s; }
+    .sk-item:nth-child(5) .bar-fill { transition-delay: .4s; }
+    .sk-item:nth-child(6) .bar-fill { transition-delay: .5s; }
+
+    /* ── NAVBAR SCROLL ── */
+    .navbar.scrolled .nav-inner {
+      background: rgba(255,255,255,0.82);
+      box-shadow: 0 8px 40px rgba(0,0,0,.09);
+    }
+
+    /* ── SECTION BADGE SHIMMER ── */
+    .section-badge {
+      position: relative;
+      overflow: hidden;
+    }
+    .section-badge::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent);
+      animation: shimmer 3.5s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%   { left: -100%; }
+      40%,100% { left: 160%; }
+    }
+
+    /* ── CONTACT CARD HOVER REFINED ── */
+    .c-card:hover .c-arr { opacity:.9; transform: translate(2px,-2px); }
+    .c-arr { transition: opacity .2s, transform .2s; }
+
+    /* ── REDUCED MOTION ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ── PROJECTS ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding-bottom: 5rem;
+    }
+    .proj-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color .2s, transform .2s;
+    }
+    .proj-card:hover { border-color: rgba(255,255,255,.2); transform: translateY(-2px); }
+    .proj-img {
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, rgba(99,102,241,.2), rgba(168,85,247,.2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      overflow: hidden;
+    }
+    .proj-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .proj-body {
+      padding: 1.125rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: .375rem;
+    }
+    .proj-cat {
+      font-size: .625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: var(--primary);
+    }
+    .proj-title {
+      font-size: .9375rem;
+      font-weight: 600;
+    }
+    .proj-desc {
+      font-size: .8125rem;
+      color: var(--muted-fg);
+      line-height: 1.5;
+    }
+    .proj-tech {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .25rem;
+    }
+    .proj-tag {
+      font-size: .625rem;
+      padding: .15rem .5rem;
+      border-radius: 9999px;
+      background: rgba(255,255,255,.08);
+      color: var(--muted-fg);
+    }
+    .proj-links {
+      display: flex;
+      gap: .5rem;
+      margin-top: auto;
+    }
+    .proj-link {
+      flex: 1;
+      padding: .375rem .75rem;
+      border-radius: .5rem;
+      font-size: .75rem;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      transition: opacity .2s;
+    }
+    .proj-link.live {
+      background: rgba(34,197,94,.15);
+      color: #22c55e;
+    }
+    .proj-link.live:hover { background: rgba(34,197,94,.25); }
+    .proj-link.gh {
+      background: rgba(0,0,0,.1);
+      color: var(--fg);
+    }
+    .proj-link.gh:hover { background: rgba(0,0,0,.2); }
+    .projects-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted-fg);
+      font-size: .9375rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px){
+      .hero{grid-template-columns:1fr;min-height:auto;}
+      .photo-wrap{max-width:16rem;margin:0 auto;}
+      .stats{gap:.5rem;}
+      .stat-num{font-size:1.75rem;}
+      .about-grid{grid-template-columns:1fr;}
+      .nav-links{display:none;}
+      .nav-burger{display:block;}
+      .projects-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner glass">
+    <span class="nav-logo" onclick="go('home')">
+      <span class="logo-ar">AR</span><span class="logo-sep">·</span>Dev
+    </span>
+    <div class="nav-links">
+      <a data-p="home"     class="active" onclick="go('home')">Bosh sahifa</a>
+      <a data-p="about"              onclick="go('about')">Men haqimda</a>
+      <a data-p="skills"             onclick="go('skills')">Skilllar</a>
+      <a data-p="projects"           onclick="go('projects')">Loyihalar</a>
+      <a data-p="chat"               onclick="go('chat')">AI Chat</a>
+      <a data-p="contact"            onclick="go('contact')">Kontakt</a>
+    </div>
+    <button class="nav-burger" onclick="toggleMobileMenu()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+
+    <!-- ══ HOME ══ -->
+    <div class="page active" id="page-home">
+
+      <section class="hero">
+        <div class="hero-left">
+          <h1 class="hero-h1 tg">Odilbekov<br>Abdurahmon.</h1>
+          <p class="hero-desc">AXT talabasi · TIU 2-kurs. Sun'iy intellekt va zamonaviy web texnologiyalari yordamida moliyaviy kelajakni quryapman.</p>
+          <div class="hero-loc">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+            Toshkent, O'zbekiston
+          </div>
+          <div class="hero-btns">
+            <button class="btn-dark" onclick="go('about')">
+              Men haqimda
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+            <button class="btn-glass glass glass-hover" onclick="go('contact')">Bog'lanish</button>
+          </div>
+        </div><!-- /hero-left -->
+
+        <div class="photo-wrap">
+          <div class="photo-glow"></div>
+          <div class="photo-card glass-strong">
+            <div class="photo-inner">
+              <img src="assets/rasm.jpg" alt="Odilbekov Abdurahmon"
+                   onerror="this.style.cssText='width:100%;height:100%;display:block;background:linear-gradient(145deg,#818cf8,#c084fc)';">
+              <div class="photo-overlay"></div>
+              <div class="photo-label">
+                <div class="pl-sub">AXT · 2-kurs</div>
+                <div class="pl-main">TIU University</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="stats">
+        <div class="stat-card glass reveal reveal-delay-1"><div class="stat-num tg-primary">20</div><div class="stat-lbl">Yosh</div></div>
+        <div class="stat-card glass reveal reveal-delay-2"><div class="stat-num tg-primary">6+</div><div class="stat-lbl">Texnologiya</div></div>
+        <div class="stat-card glass reveal reveal-delay-3"><div class="stat-num tg-primary" style="font-size:1.75rem;">2-kurs</div><div class="stat-lbl">Talaba</div></div>
+      </div>
+
+      <div class="home-chat-sec">
+        <div style="text-align:center;margin-bottom:2.5rem;">
+          <div class="section-badge glass" style="margin:0 auto 1.25rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>
+            AI Yordamchi · Real vaqtda
+          </div>
+          <h2 class="sec-title tg">Savolingizni bering.</h2>
+          <p class="sec-desc" style="text-align:center;margin:0.875rem auto 0;">Ish taklifi, stajyorlik yoki hamkorlik haqida savolingiz bormi? AI yordamchi darhol javob beradi.</p>
+        </div>
+
+        <div class="chat-box glass" style="max-width:48rem;margin:0 auto;">
+          <div class="msgs-area" id="h-msgs">
+            <div class="chat-greeting" id="h-greeting">
+              <div class="bot-icon">🤖</div>
+              <h4>Salom! Men Abdurahmonning AI yordamchisiman.</h4>
+              <p>Ish taklifi, stajyorlik yoki hamkorlik bo'yicha savolingizni bering.</p>
+            </div>
+          </div>
+          <div class="qbtns">
+            <button class="qbtn" onclick="hSend('Abdurahmon qanday texnik ko\'nikmalarga ega?')">💻 Qanday texnik skilllar bor?</button>
+            <button class="qbtn" onclick="hSend('Ta\'lim ma\'lumotlari qanday?')">🎓 Ta'lim ma'lumotlari?</button>
+            <button class="qbtn" onclick="hSend('Bog\'lanish uchun kontakt ma\'lumotlari?')">📞 Kontakt ma'lumotlari?</button>
+            <button class="qbtn" onclick="hSend('Python va AI darajasi qanday?')">🤖 Python va AI darajasi?</button>
+            <button class="qbtn" onclick="hSend('Nega aynan uni tanlash kerak?')">⭐ Nega aynan uni tanlash kerak?</button>
+            <button class="qbtn" onclick="hSend('Nima uchun uni ishga olish kerak?')">🎯 Nima uchun uni olish kerak?</button>
+            <button class="qbtn" onclick="hSend('Menga sayt yoki ilova kerak, buyurtma bermoqchiman')">🌐 Sayt buyurtma berish</button>
+            <button class="qbtn" onclick="hSend('Xizmat narxlari qancha? Sayt narxini bilmoqchiman')">💰 Xizmat narxlari?</button>
+          </div>
+          <div class="input-wrap">
+            <textarea id="h-input" placeholder="Savol yozing..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();hSend();}"></textarea>
+            <div class="input-footer">
+              <button class="send-btn" id="h-send" onclick="hSend()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 4v7a4 4 0 0 1-4 4H4"/><path d="m9 10-5 5 5 5"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ABOUT ══ -->
+    <div class="page" id="page-about">
+      <div class="page-hdr">
+        <div class="section-badge glass">MEN HAQIMDA</div>
+        <h1 class="sec-title tg">Hikoya, ta'lim va maqsad.</h1>
+        <p class="sec-desc">Men Odilbekov Abdurahmon — Toshkentda yashovchi 20 yoshli AXT talabasiman. Texnologiya yordamida moliyaviy kelajakni qulayroq qilishni maqsad qilganman.</p>
+        <div class="about-badges">
+          <span class="a-badge">TIU University</span>
+          <span class="a-badge">Biznes &amp; IT</span>
+          <span class="a-badge">AI Enthusiast</span>
+          <span class="a-badge">20 yosh</span>
+          <span class="a-badge">AXT</span>
+        </div>
+      </div>
+      <div class="about-grid">
+        <div class="a-card glass reveal reveal-delay-1">
+          <div class="a-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <h3>Ta'lim</h3>
+          <p>Toshkent International University (TIU) — Biznes va Innovatsion ta'lim fakulteti, Axborot tizimlari va texnologiyalari, 2-kurs.</p>
+        </div>
+        <div class="a-card glass reveal reveal-delay-2">
+          <div class="a-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <h3>Yo'nalish</h3>
+          <p>Bank va moliya sohasida AI integratsiyasi: fraud aniqlash, kredit skoring va chatbotlar — texnik bilim + biznes mantig'i.</p>
+        </div>
+        <div class="a-card glass reveal reveal-delay-3">
+          <div class="a-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <h3>Maqsad</h3>
+          <p>O'zbekiston bank sektorini modernizatsiya qilishga hissa qo'shish va AI yechimlarini amalda qo'llash bo'yicha tajriba orttirish.</p>
+        </div>
+        <div class="a-card glass reveal reveal-delay-4">
+          <div class="a-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h3>Kuchli tomonlar</h3>
+          <p>AI vositalar bilan samarali ishlash, yangi texnologiyalarni tez o'zlashtirish, yuqori motivatsiya va o'rganishga ochiqlik.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SKILLS ══ -->
+    <div class="page" id="page-skills">
+      <div class="page-hdr">
+        <div class="section-badge glass">TEXNIK SKILLLAR</div>
+        <h1 class="sec-title tg">O'rganganlarim.</h1>
+        <p class="sec-desc">Web va AI texnologiyalarini har kuni amaliyotda mustahkamlab boryapman.</p>
+      </div>
+      <div class="skills-wrap">
+      <div class="skills-card glass">
+        <div class="sk-item">
+          <div class="sk-hdr"><span class="sk-name">HTML5</span><span class="sk-pct">75%</span></div>
+          <div class="sk-tags">Semantik teglar, formlar, accessibility</div>
+          <div class="bar-track"><div class="bar-fill" data-w="75" style="background:linear-gradient(90deg,#6366f1,#818cf8)"></div></div>
+        </div>
+        <div class="sk-item">
+          <div class="sk-hdr"><span class="sk-name">CSS3</span><span class="sk-pct">70%</span></div>
+          <div class="sk-tags">Flexbox, Grid, animatsiya, responsive</div>
+          <div class="bar-track"><div class="bar-fill" data-w="70" style="background:linear-gradient(90deg,#a855f7,#c084fc)"></div></div>
+        </div>
+        <div class="sk-item">
+          <div class="sk-hdr"><span class="sk-name">JavaScript</span><span class="sk-pct">55%</span></div>
+          <div class="sk-tags">DOM, event, fetch/async, JSON metodlari</div>
+          <div class="bar-track"><div class="bar-fill" data-w="55" style="background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div>
+        </div>
+        <div class="sk-item">
+          <div class="sk-hdr"><span class="sk-name">Python</span><span class="sk-pct">40%</span></div>
+          <div class="sk-tags">Boshlang'ich daraja: o'zgaruvchilar, tsikllar, funksiyalar</div>
+          <div class="bar-track"><div class="bar-fill" data-w="40" style="background:linear-gradient(90deg,#06b6d4,#67e8f9)"></div></div>
+        </div>
+        <div class="sk-item">
+          <div class="sk-hdr"><span class="sk-name">AI Kodlash</span><span class="sk-pct">60%</span></div>
+          <div class="sk-tags">Prompt engineering, AI vositalar bilan dasturlash</div>
+          <div class="bar-track"><div class="bar-fill" data-w="60" style="background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
+        </div>
+        <div class="sk-item">
+          <div class="sk-hdr"><span class="sk-name">AI API</span><span class="sk-pct">45%</span></div>
+          <div class="sk-tags">REST API, HTTP, Claude/OpenAI API bilan tanishuv</div>
+          <div class="bar-track"><div class="bar-fill" data-w="45" style="background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- ══ PROJECTS ══ -->
+    <div class="page" id="page-projects">
+      <div class="page-hdr">
+        <div class="section-badge glass">LOYIHALAR</div>
+        <h1 class="sec-title tg">Mening ishlarim.</h1>
+        <p class="sec-desc">Amaliy loyihalar — real texnologiyalar bilan qurilgan.</p>
+      </div>
+      <div class="projects-grid" id="projects-grid">
+        <p class="projects-empty">Loyihalar yuklanmoqda...</p>
+      </div>
+    </div>
+
+    <!-- ══ CHAT ══ -->
+    <div class="page" id="page-chat">
+      <div class="page-hdr">
+        <div class="section-badge glass">AI YORDAMCHI</div>
+        <h1 class="sec-title tg">Savolingizni bering.</h1>
+        <p class="sec-desc">Abdurahmonning ta'limi va maqsadlari haqida AI ga istalgan savolni bering.</p>
+      </div>
+      <div style="max-width:48rem;margin:0 auto;padding-bottom:5rem;">
+        <div class="chat-box glass">
+          <div class="msgs-area" id="c-msgs">
+            <div class="chat-greeting" id="c-greeting">
+              <div class="bot-icon">🤖</div>
+              <h4>Salom! Men Abdurahmonning AI yordamchisiman.</h4>
+              <p>Ish taklifi, stajyorlik yoki hamkorlik bo'yicha savolingizni bering.</p>
+            </div>
+          </div>
+          <div class="qbtns">
+            <button class="qbtn" onclick="cSend('Abdurahmon qanday texnik ko\'nikmalarga ega?')">💻 Qanday texnik skilllar bor?</button>
+            <button class="qbtn" onclick="cSend('Ta\'lim ma\'lumotlari qanday?')">🎓 Ta'lim ma'lumotlari?</button>
+            <button class="qbtn" onclick="cSend('Bog\'lanish uchun kontakt ma\'lumotlari?')">📞 Kontakt ma'lumotlari?</button>
+            <button class="qbtn" onclick="cSend('Python va AI darajasi qanday?')">🤖 Python va AI darajasi?</button>
+            <button class="qbtn" onclick="cSend('Nega aynan uni tanlash kerak?')">⭐ Nega aynan uni tanlash kerak?</button>
+            <button class="qbtn" onclick="cSend('Nima uchun uni ishga olish kerak?')">🎯 Nima uchun uni olish kerak?</button>
+            <button class="qbtn" onclick="cSend('Abdurahmon qaysi sohalarda ishlashi mumkin?')">🏦 Qaysi sohalarda ishlaydi?</button>
+            <button class="qbtn" onclick="cSend('Kuchli va zaif tomonlari?')">⚖️ Kuchli/zaif tomonlar</button>
+            <button class="qbtn" onclick="cSend('Menga sayt yoki ilova kerak, buyurtma bermoqchiman')">🌐 Sayt buyurtma berish</button>
+            <button class="qbtn" onclick="cSend('Xizmat narxlari qancha? Sayt narxini bilmoqchiman')">💰 Xizmat narxlari?</button>
+          </div>
+          <div class="input-wrap">
+            <textarea id="c-input" placeholder="Savol yozing..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cSend();}"></textarea>
+            <div class="input-footer">
+              <button class="send-btn" id="c-send" onclick="cSend()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 4v7a4 4 0 0 1-4 4H4"/><path d="m9 10-5 5 5 5"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CONTACT ══ -->
+    <div class="page" id="page-contact">
+      <div class="page-hdr">
+        <div class="section-badge glass">KONTAKT</div>
+        <h1 class="sec-title tg">Keling, suhbatlashamiz.</h1>
+        <p class="sec-desc">Hamkorlik, savol yoki takliflaringiz uchun qulay kanaldan murojaat qiling — tezda javob beraman.</p>
+      </div>
+      <div class="contact-list">
+        <a href="mailto:uzcoin23@gmail.com" class="c-card glass glass-hover">
+          <div class="c-ico em">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </div>
+          <div class="c-info">
+            <div class="c-lbl">EMAIL</div>
+            <div class="c-val">uzcoin23@gmail.com</div>
+          </div>
+          <div class="c-arr"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></div>
+        </a>
+        <a href="https://t.me/AT12423" target="_blank" rel="noopener" class="c-card glass glass-hover">
+          <div class="c-ico tg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-8.609 3.33c-2.068.8-4.133 1.598-5.724 2.21a405.15 405.15 0 0 1-2.849 1.09c-.42.147-.99.332-1.473.901-.728.968.193 1.798.919 2.286 1.61.516 3.275 1.009 4.654 1.421l.756 2.339c.261.75.37 1.02.522 1.224.08.109.174.207.276.295.262.22.601.347.966.347.39 0 .807-.146 1.102-.44l2.328-2.138 4.226 3.076c.782.567 1.181.851 1.618.901a2.02 2.02 0 0 0 2.15-1.558c.096-.437.096-.982.096-2.068V5.48c0-1.083 0-1.629-.096-2.069a2.018 2.018 0 0 0-1.54-1.978z"/></svg>
+          </div>
+          <div class="c-info">
+            <div class="c-lbl">TELEGRAM</div>
+            <div class="c-val">@AT12423</div>
+          </div>
+          <div class="c-arr"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></div>
+        </a>
+        <a href="tel:+998935481500" class="c-card glass glass-hover">
+          <div class="c-ico ph">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.9 1.2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9a16 16 0 0 0 6.29 6.29l1.36-1.16a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div class="c-info">
+            <div class="c-lbl">TELEFON</div>
+            <div class="c-val">+998 93 548 1500</div>
+          </div>
+          <div class="c-arr"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></div>
+        </a>
+        <a href="https://github.com/AT12423" target="_blank" rel="noopener" class="c-card glass glass-hover">
+          <div class="c-ico gh">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+          </div>
+          <div class="c-info">
+            <div class="c-lbl">GITHUB</div>
+            <div class="c-val">github.com/AT12423</div>
+          </div>
+          <div class="c-arr"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>© <span id="year"></span> Odilbekov Abdurahmon · Portfolio</footer>
+
+<script type="text/plain" id="legacy-portfolio-script">
+// ── MARKED CONFIG ──
+marked.setOptions({ breaks: true, gfm: true });
+
+// ── SESSION ID (har foydalanuvchi uchun alohida xotira) ──
+const SESSION_ID = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+// ── AUTO YEAR ──
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// ── NAVIGATION ──
+function go(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const link = document.querySelector(`.nav-links [data-p="${page}"]`);
+  if (link) link.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (page === 'skills') animateBars();
+  if (page === 'projects') loadProjects();
+  setTimeout(triggerReveal, 50);
+}
+
+// ── SCROLL REVEAL ──
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.12 });
+
+function triggerReveal() {
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el => revealObserver.observe(el));
+}
+triggerReveal();
+
+// ── NAVBAR SCROLL ──
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('.navbar');
+  if (window.scrollY > 30) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+function toggleMobileMenu() {
+  const links = document.querySelector('.nav-links');
+  links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+  links.style.flexDirection = 'column';
+  links.style.position = 'absolute';
+  links.style.top = '4.5rem';
+  links.style.left = '1rem';
+  links.style.right = '1rem';
+  links.style.background = 'rgba(255,255,255,0.9)';
+  links.style.backdropFilter = 'blur(20px)';
+  links.style.borderRadius = '1rem';
+  links.style.padding = '1rem';
+  links.style.border = '1px solid rgba(255,255,255,0.7)';
+  links.style.boxShadow = '0 8px 32px rgba(0,0,0,0.1)';
+}
+
+// ── SKILL BARS ──
+function animateBars() {
+  setTimeout(() => {
+    document.querySelectorAll('#page-skills .bar-fill').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+  }, 200);
+}
+
+// ── PROJECTS ──
+const CAT_ICONS = { Frontend:'🌐', AI:'🤖', Mobile:'📱', Backend:'⚙️' };
+let projectsLoaded = false;
+
+async function loadProjects() {
+  if (projectsLoaded) return;
+  const grid = document.getElementById('projects-grid');
+  const data = JSON.parse(localStorage.getItem('ar_projects') || '[]');
+  if (!data.length) {
+    grid.innerHTML = '<p class="projects-empty">Hali loyihalar qo\'shilmagan.</p>';
+    return;
+  }
+  grid.innerHTML = data.map(p => {
+    const tags = p.tech_stack ? p.tech_stack.split(',').map(t => `<span class="proj-tag">${t.trim()}</span>`).join('') : '';
+    const liveBtn = p.live_url ? `<a href="${p.live_url}" target="_blank" rel="noopener" class="proj-link live">Ko'rish</a>` : '';
+    const ghBtn = p.github_url ? `<a href="${p.github_url}" target="_blank" rel="noopener" class="proj-link gh">GitHub</a>` : '';
+    const icon = CAT_ICONS[p.category] || '💡';
+    const imgHtml = p.image_url
+      ? `<img src="${p.image_url}" alt="${p.title}" onerror="this.parentElement.innerHTML='${icon}'">`
+      : icon;
+    return `
+      <div class="proj-card glass reveal">
+        <div class="proj-img">${imgHtml}</div>
+        <div class="proj-body">
+          ${p.category ? `<div class="proj-cat">${p.category}</div>` : ''}
+          <div class="proj-title">${p.title}</div>
+          ${p.description ? `<div class="proj-desc">${p.description}</div>` : ''}
+          ${tags ? `<div class="proj-tech">${tags}</div>` : ''}
+          ${(liveBtn || ghBtn) ? `<div class="proj-links">${liveBtn}${ghBtn}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+  projectsLoaded = true;
+  setTimeout(triggerReveal, 50);
+}
+
+// ── CHAT ENGINE ──
+let hHistory = [], hBusy = false;
+let cHistory = [], cBusy = false;
+
+function addMsg(msgsId, greetId, role, text) {
+  const greet = document.getElementById(greetId);
+  if (greet) greet.remove();
+
+  const area = document.getElementById(msgsId);
+  const row  = document.createElement('div');
+  row.className = 'msg-row ' + role;
+
+  const av  = document.createElement('div');
+  av.className = 'msg-av ' + (role === 'bot' ? 'bot' : 'user');
+  av.textContent = role === 'bot' ? '🤖' : 'Siz';
+
+  const bub = document.createElement('div');
+  bub.className = role === 'bot' ? 'msg-bub mbub' : 'msg-bub';
+  if (role === 'bot') {
+    bub.innerHTML = marked.parse(text);
+  } else {
+    bub.textContent = text;
+  }
+
+  row.appendChild(av);
+  row.appendChild(bub);
+  area.appendChild(row);
+  area.scrollTop = area.scrollHeight;
+  return bub;
+}
+
+function showTyping(msgsId, greetId) {
+  const greet = document.getElementById(greetId);
+  if (greet) greet.remove();
+  const area = document.getElementById(msgsId);
+  const row = document.createElement('div');
+  row.className = 'msg-row bot';
+  const av = document.createElement('div');
+  av.className = 'msg-av bot'; av.textContent = '🤖';
+  const bub = document.createElement('div');
+  bub.className = 'msg-bub mbub';
+  bub.innerHTML = '<span class="tw-cursor"></span>';
+  row.appendChild(av); row.appendChild(bub);
+  area.appendChild(row);
+  area.scrollTop = area.scrollHeight;
+  return bub;
+}
+
+function replaceObjectPlaceholders(value, replacements) {
+  if (Array.isArray(value)) {
+    return value.map(item => replaceObjectPlaceholders(item, replacements));
+  }
+  if (value && typeof value === 'object') {
+    const result = {};
+    for (const key in value) {
+      result[key] = replaceObjectPlaceholders(value[key], replacements);
+    }
+    return result;
+  }
+  if (typeof value !== 'string') {
+    return value;
+  }
+  if (value === '{messages}') {
+    return replacements.messages;
+  }
+  return value
+    .replace(/{key}/g, replacements.key)
+    .replace(/{model}/g, replacements.model);
+}
+
+function buildCustomPayload(config, apiKey, history) {
+  const headers = replaceObjectPlaceholders(config.headers || {}, {
+    key: apiKey,
+    model: config.model || '',
+    messages: history
+  });
+  const body = replaceObjectPlaceholders(config.body || {}, {
+    key: apiKey,
+    model: config.model || '',
+    messages: history
+  });
+  if (!headers['Content-Type'] && !headers['content-type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+  return { headers, body };
+}
+
+// Real streaming: API ga qarab murojaat
+async function streamReply(history, bub, area) {
+  const provider = localStorage.getItem('active_api_provider') || 'groq';
+  const apiKey = localStorage.getItem('active_api_key') || localStorage.getItem('active_groq_key');
+  if (!apiKey) {
+    throw new Error('API kalit topilmadi. Admin paneldan qo\'shing.');
+  }
+
+  let url, headers, body;
+
+  if (provider === 'custom') {
+    const config = JSON.parse(localStorage.getItem('active_custom_config') || '{}');
+    if (!config.endpoint) {
+      throw new Error('Custom API endpoint yo\'q. Admin panelda tekshiring.');
+    }
+    const payload = buildCustomPayload(config, apiKey, history);
+    url = config.endpoint;
+    headers = payload.headers;
+    body = payload.body;
+  } else if (provider === 'groq') {
+    url = 'https://api.groq.com/openai/v1/chat/completions';
+    headers = {
+      'Authorization': 'Bearer ' + apiKey,
+      'Content-Type': 'application/json'
+    };
+    body = {
+      model: 'llama3-8b-8192',
+      messages: history,
+      stream: true,
+      max_tokens: 1024
+    };
+  } else if (provider === 'openai') {
+    url = 'https://api.openai.com/v1/chat/completions';
+    headers = {
+      'Authorization': 'Bearer ' + apiKey,
+      'Content-Type': 'application/json'
+    };
+    body = {
+      model: 'gpt-3.5-turbo',
+      messages: history,
+      stream: true,
+      max_tokens: 1024
+    };
+  } else if (provider === 'google') {
+    const promptText = history.map(m => `${m.role === 'user' ? 'User' : m.role === 'assistant' ? 'Assistant' : 'System'}: ${m.content}`).join('\n');
+    url = 'https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generate?key=' + encodeURIComponent(apiKey);
+    headers = {
+      'Content-Type': 'application/json'
+    };
+    body = {
+      prompt: { text: promptText },
+      max_output_tokens: 1024,
+      temperature: 0.7
+    };
+  } else if (provider === 'gemini') {
+    // Gemini hali to'liq qo'llab-quvvatlanmaydi, chunki format farq qiladi
+    throw new Error('Gemini hali qo\'llab-quvvatlanmaydi. Custom API sifatida sozlang yoki boshqa provayder ishlat.');
+  } else if (provider === 'github') {
+    url = 'https://api.github.com/copilot/chat/completions';
+    headers = {
+      'Authorization': 'Bearer ' + apiKey,
+      'Content-Type': 'application/json',
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2024-11-28'
+    };
+    body = {
+      model: 'gpt-4',
+      messages: history,
+      stream: true
+    };
+  } else {
+    throw new Error('Noma\'lum provayder.');
+  }
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error?.message || data.message || 'HTTP ' + res.status);
+  }
+
+  const isGoogle = provider === 'google';
+  if (isGoogle) {
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.output?.[0]?.content || data?.candidates?.[0]?.content || data?.output?.[0]?.content || JSON.stringify(data);
+    bub.innerHTML = text ? marked.parse(text) : '<em>Javob ololmadim.</em>';
+    area.scrollTop = area.scrollHeight;
+    return text || 'Javob ololmadim.';
+  }
+
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '', fullText = '', started = false;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop() || '';
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') break;
+        let parsed;
+        try { parsed = JSON.parse(raw); } catch { continue; }
+        if (parsed.error) throw new Error(parsed.error.message);
+        const delta = parsed.choices?.[0]?.delta?.content;
+        if (delta) {
+          if (!started) { bub.textContent = ''; started = true; }
+          fullText += delta;
+          bub.textContent = fullText;
+          area.scrollTop = area.scrollHeight;
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  // Streaming tugagach markdown render
+  bub.innerHTML = fullText ? marked.parse(fullText) : '<em>Javob ololmadim.</em>';
+  area.scrollTop = area.scrollHeight;
+  return fullText || 'Javob ololmadim.';
+}
+
+async function hSend(preset) {
+  const inp = document.getElementById('h-input');
+  const text = preset || inp.value.trim();
+  if (!text || hBusy) return;
+
+  addMsg('h-msgs', 'h-greeting', 'user', text);
+  const messages = [
+    { role: 'system', content: 'Sen Odilbekov Abdurahmonning shaxsiy AI yordamchisisisan. FAQAT o\'zbek tilida javob ber. Qisqa, aniq, samimiy va professional javob ber. Faqat haqiqiy ma\'lumotlarni ayt — bilmagan narsani o\'ylab topma.' },
+    { role: 'user', content: text }
+  ];
+  inp.value = ''; inp.style.height = 'auto';
+  hBusy = true; document.getElementById('h-send').disabled = true;
+  const hBub = showTyping('h-msgs', 'h-greeting');
+  const hArea = document.getElementById('h-msgs');
+
+  try {
+    const reply = await streamReply(messages, hBub, hArea);
+    // No history for home chat
+  } catch(e) {
+    hBub.innerHTML = marked.parse('Xatolik: ' + e.message);
+  } finally {
+    hBusy = false; document.getElementById('h-send').disabled = false;
+  }
+}
+
+async function cSend(preset) {
+  const inp = document.getElementById('c-input');
+  const text = preset || inp.value.trim();
+  if (!text || cBusy) return;
+
+  addMsg('c-msgs', 'c-greeting', 'user', text);
+  cHistory.push({ role: 'user', content: text });
+  const messages = [
+    { role: 'system', content: `Sen Odilbekov Abdurahmonning shaxsiy AI yordamchisisisan.
+FAQAT o'zbek tilida javob ber.
+Qisqa, aniq, samimiy va professional javob ber.
+Faqat haqiqiy ma'lumotlarni ayt — bilmagan narsani o'ylab topma, "bu haqda aniq ma'lumotim yo'q" de.
+
+════════════════════════════════
+ABDURAHMON HAQIDA TO'LIQ MA'LUMOT
+════════════════════════════════
+
+SHAXSIY:
+- To'liq ism: Odilbekov Abdurahmon
+- Yosh: 20 yosh
+- Joylashuv: Toshkent, O'zbekiston
+
+TA'LIM:
+- Universitet: Toshkent International University (TIU)
+- Fakultet: Biznes va Innovatsion Ta'lim
+- Yo'nalish: Axborot tizimlari va texnologiyalari (AXT)
+- Kurs: 2-kurs (hozirda o'qimoqda)
+
+KONTAKT:
+- Email: uzcoin23@gmail.com
+- Telegram: @AT12423
+- Telefon: +998 93 548 1500
+
+TEXNIK SKILLLAR:
+- HTML5 (75%): semantik teglar, form, tablo, media elementlar, responsive sahifalar
+- CSS3 (70%): Flexbox, Grid, animatsiya, media query, pseudo-elementlar
+- JavaScript (55%): DOM, event, fetch/async, massiv metodlari, JSON
+- Python (40%): o'zgaruvchilar, shartlar, tsikllar, funksiyalar, oddiy skriptlar
+- AI Kodlash (60%): GitHub Copilot, ChatGPT, Claude bilan dasturlash, prompt engineering
+- AI API (45%): REST API, HTTP so'rovlar, GPT va Claude API integratsiya
+
+QIZIQISHLAR VA YO'NALISHLAR:
+- Frontend dasturlash — zamonaviy UI/UX yaratish
+- AI modellari bilan ishlash va integratsiya
+- Veb va mobil ilovalar loyihalash
+- FinTech va bank texnologiyalari
+- Yangi AI texnologiyalarni o'rganish
+
+MAQSAD:
+- Bankning AI bo'limida stajerofka
+- Frontend + AI yo'nalishida professional o'sish
+- Real loyihalarda tajriba orttirish` },
+    ...cHistory
+  ];
+  inp.value = ''; inp.style.height = 'auto';
+  cBusy = true; document.getElementById('c-send').disabled = true;
+  const cBub = showTyping('c-msgs', 'c-greeting');
+  const cArea = document.getElementById('c-msgs');
+
+  try {
+    const reply = await streamReply(messages, cBub, cArea);
+    cHistory.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    cHistory.pop();
+    cBub.innerHTML = marked.parse('Xatolik: ' + e.message);
+  } finally {
+    cBusy = false; document.getElementById('c-send').disabled = false;
+  }
+}
+
+// Auto-resize textareas
+['h-input','c-input'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', function(){ this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,128)+'px'; });
+});
+</script>
+
+<script>
+if (window.marked) marked.setOptions({ breaks: true, gfm: true });
+
+const SESSION_ID_KEY = 'ar_chat_session_id';
+const existingSession = localStorage.getItem(SESSION_ID_KEY);
+const SESSION_ID = existingSession || ('sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11));
+localStorage.setItem(SESSION_ID_KEY, SESSION_ID);
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+function escapeHTML(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function safeUrl(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return '';
+  try {
+    const url = new URL(raw, window.location.origin);
+    if (url.protocol === 'http:' || url.protocol === 'https:') return url.href;
+  } catch {}
+  if (/^(assets\/|\.\/assets\/|\/assets\/)/.test(raw)) return raw;
+  return '';
+}
+
+function renderMarkdownSafe(text) {
+  const safe = escapeHTML(text);
+  return window.marked ? marked.parse(safe) : safe.replace(/\n/g, '<br>');
+}
+
+function go(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const link = document.querySelector(`.nav-links [data-p="${page}"]`);
+  if (link) link.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (page === 'skills') animateBars();
+  if (page === 'projects') loadProjects();
+  setTimeout(triggerReveal, 50);
+}
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+
+function triggerReveal() {
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el => revealObserver.observe(el));
+}
+triggerReveal();
+
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('.navbar');
+  if (window.scrollY > 30) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+function toggleMobileMenu() {
+  const links = document.querySelector('.nav-links');
+  links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+  links.style.flexDirection = 'column';
+  links.style.position = 'absolute';
+  links.style.top = '4.5rem';
+  links.style.left = '1rem';
+  links.style.right = '1rem';
+  links.style.background = 'rgba(255,255,255,0.9)';
+  links.style.backdropFilter = 'blur(20px)';
+  links.style.borderRadius = '1rem';
+  links.style.padding = '1rem';
+  links.style.border = '1px solid rgba(255,255,255,0.7)';
+  links.style.boxShadow = '0 8px 32px rgba(0,0,0,0.1)';
+}
+
+function animateBars() {
+  setTimeout(() => {
+    document.querySelectorAll('#page-skills .bar-fill').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+  }, 200);
+}
+
+const CAT_ICONS = { Frontend:'🌐', AI:'🤖', Mobile:'📱', Backend:'⚙️' };
+
+async function loadProjects() {
+  const grid = document.getElementById('projects-grid');
+  grid.innerHTML = '<p class="projects-empty">Loyihalar yuklanmoqda...</p>';
+
+  try {
+    const res = await fetch('/api/projects');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Loyihalarni yuklab bo\'lmadi');
+
+    if (!data.length) {
+      grid.innerHTML = '<p class="projects-empty">Hali loyihalar qo\'shilmagan.</p>';
+      return;
+    }
+
+    grid.innerHTML = data.map(p => {
+      const tags = p.tech_stack
+        ? p.tech_stack.split(',').map(t => `<span class="proj-tag">${escapeHTML(t.trim())}</span>`).join('')
+        : '';
+      const liveUrl = safeUrl(p.live_url);
+      const ghUrl = safeUrl(p.github_url);
+      const liveBtn = liveUrl ? `<a href="${escapeHTML(liveUrl)}" target="_blank" rel="noopener" class="proj-link live">Ko'rish</a>` : '';
+      const ghBtn = ghUrl ? `<a href="${escapeHTML(ghUrl)}" target="_blank" rel="noopener" class="proj-link gh">GitHub</a>` : '';
+      const icon = CAT_ICONS[p.category] || '💡';
+      const imageUrl = safeUrl(p.image_url);
+      const imgHtml = imageUrl
+        ? `<img src="${escapeHTML(imageUrl)}" alt="${escapeHTML(p.title)}" onerror="this.parentElement.textContent='${icon}'">`
+        : icon;
+
+      return `
+        <div class="proj-card glass reveal">
+          <div class="proj-img">${imgHtml}</div>
+          <div class="proj-body">
+            ${p.category ? `<div class="proj-cat">${escapeHTML(p.category)}</div>` : ''}
+            <div class="proj-title">${escapeHTML(p.title)}</div>
+            ${p.description ? `<div class="proj-desc">${escapeHTML(p.description)}</div>` : ''}
+            ${tags ? `<div class="proj-tech">${tags}</div>` : ''}
+            ${(liveBtn || ghBtn) ? `<div class="proj-links">${liveBtn}${ghBtn}</div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+    setTimeout(triggerReveal, 50);
+  } catch (e) {
+    grid.innerHTML = `<p class="projects-empty">Xatolik: ${escapeHTML(e.message)}</p>`;
+  }
+}
+
+let hBusy = false;
+let cBusy = false;
+
+function addMsg(msgsId, greetId, role, text) {
+  const greet = document.getElementById(greetId);
+  if (greet) greet.remove();
+
+  const area = document.getElementById(msgsId);
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + role;
+
+  const av = document.createElement('div');
+  av.className = 'msg-av ' + (role === 'bot' ? 'bot' : 'user');
+  av.textContent = role === 'bot' ? 'AI' : 'Siz';
+
+  const bub = document.createElement('div');
+  bub.className = role === 'bot' ? 'msg-bub mbub' : 'msg-bub';
+  if (role === 'bot') bub.innerHTML = renderMarkdownSafe(text);
+  else bub.textContent = text;
+
+  row.appendChild(av);
+  row.appendChild(bub);
+  area.appendChild(row);
+  area.scrollTop = area.scrollHeight;
+  return bub;
+}
+
+function showTyping(msgsId, greetId) {
+  const greet = document.getElementById(greetId);
+  if (greet) greet.remove();
+  const area = document.getElementById(msgsId);
+  const row = document.createElement('div');
+  row.className = 'msg-row bot';
+  const av = document.createElement('div');
+  av.className = 'msg-av bot';
+  av.textContent = 'AI';
+  const bub = document.createElement('div');
+  bub.className = 'msg-bub mbub';
+  bub.innerHTML = '<span class="tw-cursor"></span>';
+  row.appendChild(av);
+  row.appendChild(bub);
+  area.appendChild(row);
+  area.scrollTop = area.scrollHeight;
+  return bub;
+}
+
+async function streamReply(text, bub, area) {
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      sessionId: SESSION_ID,
+      messages: [{ role: 'user', content: text }]
+    })
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || `HTTP ${res.status}`);
+  }
+
+  if (!res.body) throw new Error('Brauzer streaming javobni o\'qiy olmadi');
+
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  let fullText = '';
+  let started = false;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop() || '';
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (!raw || raw === '[DONE]') continue;
+
+        let parsed;
+        try { parsed = JSON.parse(raw); } catch { continue; }
+        if (parsed.error) throw new Error(parsed.error);
+        if (parsed.d) {
+          if (!started) {
+            bub.textContent = '';
+            started = true;
+          }
+          fullText += parsed.d;
+          bub.textContent = fullText;
+          area.scrollTop = area.scrollHeight;
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  bub.innerHTML = fullText ? renderMarkdownSafe(fullText) : '<em>Javob ololmadim.</em>';
+  area.scrollTop = area.scrollHeight;
+  return fullText || 'Javob ololmadim.';
+}
+
+async function hSend(preset) {
+  const inp = document.getElementById('h-input');
+  const text = preset || inp.value.trim();
+  if (!text || hBusy) return;
+
+  addMsg('h-msgs', 'h-greeting', 'user', text);
+  inp.value = '';
+  inp.style.height = 'auto';
+  hBusy = true;
+  document.getElementById('h-send').disabled = true;
+  document.querySelectorAll('#page-home .qbtn').forEach(btn => btn.disabled = true);
+  const bub = showTyping('h-msgs', 'h-greeting');
+  const area = document.getElementById('h-msgs');
+
+  try {
+    await streamReply(text, bub, area);
+  } catch(e) {
+    bub.innerHTML = renderMarkdownSafe('Xatolik: ' + e.message);
+  } finally {
+    hBusy = false;
+    document.getElementById('h-send').disabled = false;
+    document.querySelectorAll('#page-home .qbtn').forEach(btn => btn.disabled = false);
+  }
+}
+
+async function cSend(preset) {
+  const inp = document.getElementById('c-input');
+  const text = preset || inp.value.trim();
+  if (!text || cBusy) return;
+
+  addMsg('c-msgs', 'c-greeting', 'user', text);
+  inp.value = '';
+  inp.style.height = 'auto';
+  cBusy = true;
+  document.getElementById('c-send').disabled = true;
+  document.querySelectorAll('#page-chat .qbtn').forEach(btn => btn.disabled = true);
+  const bub = showTyping('c-msgs', 'c-greeting');
+  const area = document.getElementById('c-msgs');
+
+  try {
+    await streamReply(text, bub, area);
+  } catch(e) {
+    bub.innerHTML = renderMarkdownSafe('Xatolik: ' + e.message);
+  } finally {
+    cBusy = false;
+    document.getElementById('c-send').disabled = false;
+    document.querySelectorAll('#page-chat .qbtn').forEach(btn => btn.disabled = false);
+  }
+}
+
+['h-input','c-input'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 128) + 'px';
+  });
+});
+</script>
+</body>
+</html>

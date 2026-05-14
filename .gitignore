@@ -1,0 +1,7 @@
+.env
+db.sqlite
+db.sqlite-*
+node_modules/
+*.log
+.DS_Store
+.gstack/
