@@ -109,7 +109,7 @@ async function callProviderStream(config, fullPrompt, history, userMsg, onChunk)
       },
       body: JSON.stringify({
         ...geminiMessages(fullPrompt, history, userMsg),
-        generationConfig: { maxOutputTokens: 700, temperature: 0.7 }
+        generationConfig: { maxOutputTokens: 500, temperature: 0.7 }
       })
     });
     if (!r.ok) throw new Error(await readProviderError(r));
@@ -144,8 +144,8 @@ async function callProviderStream(config, fullPrompt, history, userMsg, onChunk)
     stream: true,
     messages: openAIMessages(fullPrompt, history, userMsg)
   };
-  if (config.provider === 'openai') body.max_completion_tokens = 700;
-  else { body.max_tokens = 700; body.temperature = 0.7; }
+  if (config.provider === 'openai') body.max_completion_tokens = 500;
+  else { body.max_tokens = 500; body.temperature = 0.7; }
 
   const r = await fetch(config.type === 'github' ? config.base_url : chatEndpoint(config.base_url), {
     method: 'POST',
@@ -248,17 +248,6 @@ function buildKnowledgeBase(md) {
 const KNOWLEDGE_BASE = buildKnowledgeBase(mdContent);
 
 // ── SYSTEM PROMPT ─────────────────────────────
-const ABDURAHMON_FULL = mdContent
-  ? '\n\n=== ABDURAHMON TO\'LIQ BILIM OMBORI ===\n' +
-    mdContent
-      .replace(/^# .+$/m, '')
-      .replace(/\*\*(.*?)\*\*/g, '$1')
-      .replace(/`([^`\n]+)`/g, '$1')
-      .replace(/\|[-|: ]+\|/g, '')
-      .replace(/^\s*>\s*/gm, '')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim()
-  : '';
 
 const SYSTEM_PROMPT = `
 Sen Odilbekov Abdurahmonning shaxsiy AI yordamchisisan.
@@ -374,8 +363,7 @@ XIZMAT NARXLARI (avval qanday sayt kerakligini so'ra, keyin narx ayt):
 - Mobil ilova: 3M–15M+ so'm
 - AI chatbot qo'shish: +500k–1.5M so'm
 
-Buyurtma: @AT12423 Telegram
-${ABDURAHMON_FULL}`;
+Buyurtma: @AT12423 Telegram`;
 
 // ── KNOWLEDGE SEARCH ──────────────────────────
 function searchKnowledge(query) {
@@ -416,7 +404,7 @@ function saveMsg(sid, role, content) {
 
 function getHistory(sid) {
   return db.prepare(
-    'SELECT role, content FROM conversations WHERE session_id=? ORDER BY id DESC LIMIT 10'
+    'SELECT role, content FROM conversations WHERE session_id=? ORDER BY id DESC LIMIT 6'
   ).all(sid).reverse();
 }
 
@@ -439,6 +427,19 @@ function extractMemory(sid, message) {
 
 function getMemories(sid) {
   return db.prepare('SELECT key_info, value FROM user_memory WHERE session_id=?').all(sid);
+}
+
+// ── AKTIV KALIT CACHE (5s TTL) ────────────────
+let _keyCache = null;
+let _keyCacheAt = 0;
+function getCachedKey() {
+  if (!_keyCache || Date.now() - _keyCacheAt > 5000) {
+    _keyCache = providerConfig(
+      db.prepare('SELECT id, provider, base_url, model, key_value FROM api_keys WHERE is_active = 1').get()
+    );
+    _keyCacheAt = Date.now();
+  }
+  return _keyCache;
 }
 
 // ── ENDPOINT ──────────────────────────────────
@@ -473,10 +474,8 @@ router.post('/', async (req, res) => {
 
     const fullPrompt = SYSTEM_PROMPT + memCtx + knwCtx;
 
-    // Faol kalitni DB dan ol, .env fallback
-    const activeKey = providerConfig(
-      db.prepare('SELECT id, provider, base_url, model, key_value FROM api_keys WHERE is_active = 1').get()
-    );
+    // Faol kalitni cache dan ol (5 soniya TTL)
+    const activeKey = getCachedKey();
 
     if (!activeKey.key_value) {
       return res.status(500).json({ error: 'API kalit sozlanmagan. Admin paneldan kalit qo\'shing.' });
