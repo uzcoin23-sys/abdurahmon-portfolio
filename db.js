@@ -72,31 +72,46 @@ db.prepare(`
       model = COALESCE(NULLIF(model, ''), 'llama-3.3-70b-versatile')
 `).run();
 
-// .env dagi keylarni avtomatik qo'shish (agar DB da yo'q bo'lsa)
+// Kalit turini avtomatik aniqlash
+function detectProvider(key) {
+  if (!key) return null;
+  if (key.startsWith('gsk_'))                                    return { provider: 'groq',   base_url: 'https://api.groq.com/openai/v1',                              model: 'llama-3.3-70b-versatile' };
+  if (key.startsWith('AIza'))                                    return { provider: 'gemini', base_url: 'https://generativelanguage.googleapis.com/v1beta',             model: 'gemini-2.5-flash' };
+  if (/^(github_pat_|ghp_|gho_|ghu_|ghs_|ghr_)/.test(key))     return { provider: 'github', base_url: 'https://models.github.ai/inference/chat/completions',          model: 'openai/gpt-4.1' };
+  if (key.startsWith('xai-'))                                    return { provider: 'xai',    base_url: 'https://api.x.ai/v1',                                         model: 'grok-3-mini' };
+  if (key.startsWith('sk-'))                                     return { provider: 'openai', base_url: 'https://api.openai.com/v1',                                   model: 'gpt-4.1-mini' };
+  return null;
+}
+
+// Env dagi kalitlar — server qayta ishga tushganda ham saqlanadi
 const envKeys = [
-  {
-    env: process.env.GROQ_API_KEY,
-    label: '.env Groq kalit',
-    provider: 'groq',
-    base_url: 'https://api.groq.com/openai/v1',
-    model: 'llama-3.3-70b-versatile'
-  },
-  {
-    env: process.env.XAI_API_KEY,
-    label: 'xAI Grok kalit',
-    provider: 'xai',
-    base_url: 'https://api.x.ai/v1',
-    model: 'grok-4.20-reasoning'
-  }
+  { env: process.env.ACTIVE_API_KEY,  label: 'Asosiy kalit',   forceActive: true  },
+  { env: process.env.GROQ_API_KEY,    label: 'Groq kalit',     forceActive: false },
+  { env: process.env.XAI_API_KEY,     label: 'xAI kalit',      forceActive: false },
+  { env: process.env.GITHUB_TOKEN,    label: 'GitHub kalit',   forceActive: false },
+  { env: process.env.GEMINI_API_KEY,  label: 'Gemini kalit',   forceActive: false },
+  { env: process.env.OPENAI_API_KEY,  label: 'OpenAI kalit',   forceActive: false },
 ];
 
 for (const k of envKeys) {
   if (!k.env) continue;
-  const existing = db.prepare('SELECT id FROM api_keys WHERE key_value = ?').get(k.env);
-  if (!existing) {
+  const info = detectProvider(k.env);
+  if (!info) continue;
+
+  const existing = db.prepare('SELECT id, is_active FROM api_keys WHERE key_value = ?').get(k.env);
+  if (existing) {
+    // Kalit bor — agar forceActive bo'lsa doim aktiv qil
+    if (k.forceActive) {
+      db.prepare('UPDATE api_keys SET is_active = 0').run();
+      db.prepare('UPDATE api_keys SET is_active = 1 WHERE id = ?').run(existing.id);
+    }
+  } else {
+    // Kalit yo'q — qo'sh
     const hasActive = db.prepare('SELECT id FROM api_keys WHERE is_active = 1').get();
+    const makeActive = k.forceActive ? 1 : (hasActive ? 0 : 1);
+    if (k.forceActive) db.prepare('UPDATE api_keys SET is_active = 0').run();
     db.prepare('INSERT INTO api_keys (label, provider, base_url, model, key_value, is_active) VALUES (?, ?, ?, ?, ?, ?)')
-      .run(k.label, k.provider, k.base_url, k.model, k.env, hasActive ? 0 : 1);
+      .run(k.label, info.provider, info.base_url, info.model, k.env, makeActive);
   }
 }
 
